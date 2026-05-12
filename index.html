@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Pastelería</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --pink:    #FFD1DC; --pink-d:  #c4607a; --pink-m: #fbe8ed;
+  --blue:    #A2CFFE; --blue-d:  #3a78b5; --blue-m: #deeeff;
+  --mint:    #AAF0D1; --mint-d:  #1f9060; --mint-m: #d4faec;
+  --lav:     #E3E4FA; --lav-d:   #5254b0; --lav-m:  #f0f0ff;
+  --lemon:   #FFFACD; --lemon-d: #8a7a10; --lemon-m:#fffde8;
+  --peach:   #FFDAB9; --peach-d: #b06020; --peach-m:#fff0e0;
+  --lilac:   #DCD0FF; --lilac-d: #6040c0; --lilac-m:#f0ecff;
+  --powder:  #B0E0E6; --powder-d:#207888; --powder-m:#e0f4f6;
+
+  --bg:      #f5f0f8;
+  --surface: #ffffff;
+  --border:  rgba(180,140,170,0.18);
+  --text:    #2c1f28;
+  --mid:     #7a5870;
+  --soft:    #b8a0b0;
+
+  --ok:      #34c774; --ok-bg:   #e8faf0;
+  --warn:    #f0a020; --warn-bg: #fff5e0;
+  --danger:  #e04060; --danger-bg:#feeaed;
+  --info:    #4090e0; --info-bg: #e8f2fd;
+
+  --r:    20px;
+  --r-sm: 12px;
+  --r-xs: 8px;
+  --nav:  72px;
+  --hdr:  60px;
+  --sh:   0 4px 20px rgba(100,60,90,0.10);
+  --sh-lg:0 8px 32px rgba(100,60,90,0.14);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{
+  font-family:'Plus Jakarta Sans',system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  display:flex;
+  flex-direction:column;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ─── HEADER ─── */
+.hdr{
+  height:var(--hdr);
+  background:var(--surface);
+  display:flex;
+  align-items:center;
+  padding:0 1.1rem;
+  gap:0.7rem;
+  flex-shrink:0;
+  box-shadow:0 1px 0 var(--border);
+  position:relative;
+  z-index:40;
+}
+.hdr-avatar{
+  width:36px;height:36px;
+  background:linear-gradient(135deg,var(--pink),var(--lilac));
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;
+  flex-shrink:0;
+  box-shadow:0 2px 8px rgba(200,100,140,0.25);
+}
+.hdr-info{flex:1;min-width:0;}
+.hdr-info h1{font-size:0.95rem;font-weight:800;color:var(--text);letter-spacing:-0.01em;}
+.hdr-info p{font-size:0.68rem;color:var(--soft);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hdr-notif{
+  width:34px;height:34px;
+  background:var(--lav);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;
+  position:relative;
+  cursor:pointer;
+  flex-shrink:0;
+}
+.hdr-notif-dot{
+  position:absolute;top:6px;right:6px;
+  width:8px;height:8px;
+  background:var(--danger);
+  border-radius:50%;
+  border:2px solid var(--surface);
+  display:none;
+}
+.hdr-notif-dot.show{display:block;}
+
+/* ─── SCROLL ─── */
+.scroll{
+  flex:1;
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  scroll-behavior:smooth;
+  padding:0 0 0.5rem;
+}
+.scroll::-webkit-scrollbar{display:none;}
+
+.screen{display:none;animation:fadeIn 0.18s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+/* ─── HERO BANNER (dashboard) ─── */
+.hero{
+  background:linear-gradient(135deg,#ffc8d8 0%,#d8c8ff 50%,#b8e8ff 100%);
+  padding:1.2rem 1.2rem 2rem;
+  position:relative;
+  overflow:hidden;
+}
+.hero::after{
+  content:'🍰';
+  position:absolute;
+  right:-0.5rem;top:-0.8rem;
+  font-size:6rem;
+  opacity:0.12;
+  transform:rotate(12deg);
+  line-height:1;
+}
+.hero-label{font-size:0.7rem;font-weight:700;color:rgba(80,40,70,0.6);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.2rem;}
+.hero-amount{font-size:2.2rem;font-weight:800;color:var(--text);letter-spacing:-0.03em;line-height:1;}
+.hero-sub{font-size:0.8rem;color:var(--mid);font-weight:600;margin-top:0.3rem;}
+
+/* ─── STATS CHIPS ROW ─── */
+.chips-row{
+  display:flex;
+  gap:0.6rem;
+  padding:0 1rem;
+  margin-top:-1rem;
+  overflow-x:auto;
+  scrollbar-width:none;
+  padding-bottom:0.2rem;
+}
+.chips-row::-webkit-scrollbar{display:none;}
+.chip{
+  background:var(--surface);
+  border-radius:var(--r);
+  padding:0.65rem 0.9rem;
+  min-width:110px;
+  flex-shrink:0;
+  box-shadow:var(--sh);
+  border:1px solid var(--border);
+}
+.chip-icon{font-size:1.1rem;margin-bottom:0.15rem;}
+.chip-val{font-size:1.1rem;font-weight:800;color:var(--text);line-height:1;}
+.chip-lbl{font-size:0.65rem;font-weight:600;color:var(--soft);margin-top:0.1rem;white-space:nowrap;}
+
+/* ─── SECTION ─── */
+.sec{padding:1rem 1rem 0;}
+.sec-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.65rem;}
+.sec-title{font-size:0.8rem;font-weight:800;color:var(--mid);text-transform:uppercase;letter-spacing:0.06em;}
+.sec-action{font-size:0.72rem;font-weight:700;color:var(--lilac-d);cursor:pointer;}
+
+/* ─── CARD ─── */
+.card{
+  background:var(--surface);
+  border-radius:var(--r);
+  box-shadow:var(--sh);
+  border:1px solid var(--border);
+  overflow:hidden;
+  margin-bottom:0.8rem;
+}
+.card-pad{padding:1rem 1.1rem;}
+.card-title{font-size:0.82rem;font-weight:800;color:var(--mid);letter-spacing:0.03em;text-transform:uppercase;margin-bottom:0.75rem;}
+
+/* ─── LIST ROW ─── */
+.list-row{
+  display:flex;
+  align-items:center;
+  gap:0.75rem;
+  padding:0.75rem 1.1rem;
+  border-bottom:1px solid var(--border);
+  transition:background 0.12s;
+}
+.list-row:last-child{border-bottom:none;}
+.list-row:active{background:var(--bg);}
+.list-icon{
+  width:38px;height:38px;
+  border-radius:var(--r-sm);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.05rem;
+  flex-shrink:0;
+}
+.li-pink   {background:var(--pink-m);}
+.li-blue   {background:var(--blue-m);}
+.li-mint   {background:var(--mint-m);}
+.li-lemon  {background:var(--lemon-m);}
+.li-peach  {background:var(--peach-m);}
+.li-lilac  {background:var(--lilac-m);}
+.li-powder {background:var(--powder-m);}
+.li-lav    {background:var(--lav-m);}
+.list-body{flex:1;min-width:0;}
+.list-name{font-size:0.85rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.list-sub{font-size:0.7rem;color:var(--soft);font-weight:500;margin-top:0.05rem;}
+.list-right{text-align:right;flex-shrink:0;}
+.list-val{font-size:0.85rem;font-weight:800;color:var(--text);}
+.list-sub2{font-size:0.68rem;color:var(--soft);font-weight:500;}
+
+/* ─── BADGES ─── */
+.badge{
+  display:inline-flex;align-items:center;gap:0.2rem;
+  padding:0.18rem 0.55rem;
+  border-radius:30px;
+  font-size:0.65rem;font-weight:800;
+  letter-spacing:0.02em;white-space:nowrap;
+}
+.b-ok     {background:var(--ok-bg);   color:var(--ok);}
+.b-warn   {background:var(--warn-bg); color:var(--warn);}
+.b-danger {background:var(--danger-bg);color:var(--danger);}
+.b-pink   {background:var(--pink-m);  color:var(--pink-d);}
+.b-blue   {background:var(--blue-m);  color:var(--blue-d);}
+.b-mint   {background:var(--mint-m);  color:var(--mint-d);}
+.b-lilac  {background:var(--lilac-m); color:var(--lilac-d);}
+.b-peach  {background:var(--peach-m); color:var(--peach-d);}
+.b-lemon  {background:var(--lemon-m); color:var(--lemon-d);}
+
+/* ─── PAGE HEADER ─── */
+.ph{padding:1rem 1.1rem 0.2rem;display:flex;align-items:center;justify-content:space-between;}
+.ph-title{font-size:1.2rem;font-weight:800;color:var(--text);letter-spacing:-0.02em;}
+
+/* ─── PILL TABS ─── */
+.pill-tabs{
+  display:flex;gap:0.4rem;
+  padding:0.7rem 1rem;
+  overflow-x:auto;scrollbar-width:none;
+}
+.pill-tabs::-webkit-scrollbar{display:none;}
+.pill{
+  padding:0.45rem 1rem;
+  border-radius:30px;
+  border:1.5px solid var(--border);
+  background:var(--surface);
+  font-family:inherit;font-size:0.75rem;font-weight:700;
+  color:var(--soft);cursor:pointer;white-space:nowrap;
+  transition:all 0.15s;
+}
+.pill.active{
+  background:var(--lilac);
+  color:var(--lilac-d);
+  border-color:var(--lilac);
+  box-shadow:0 2px 8px rgba(100,64,192,0.18);
+}
+
+/* ─── FORMS ─── */
+.form-sec{padding:0 1rem;}
+.fg{margin-bottom:0.85rem;}
+.fg label{display:block;font-size:0.72rem;font-weight:700;color:var(--mid);margin-bottom:0.3rem;letter-spacing:0.02em;}
+input,select,textarea{
+  width:100%;
+  padding:0.72rem 0.9rem;
+  border:1.5px solid var(--border);
+  border-radius:var(--r-sm);
+  font-family:inherit;font-size:0.88rem;font-weight:500;
+  color:var(--text);background:var(--surface);
+  outline:none;-webkit-appearance:none;
+  transition:border-color 0.15s,box-shadow 0.15s;
+}
+input:focus,select:focus{border-color:var(--lilac-d);box-shadow:0 0 0 3px var(--lilac);}
+input[readonly]{background:var(--bg);color:var(--soft);}
+input[type=number]{-moz-appearance:textfield;}
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;}
+
+/* ─── BUTTONS ─── */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:0.4rem;
+  padding:0.78rem 1.3rem;
+  border-radius:var(--r-sm);border:none;
+  font-family:inherit;font-size:0.88rem;font-weight:700;
+  cursor:pointer;transition:all 0.15s;
+  letter-spacing:0.01em;
+}
+.btn:active{transform:scale(0.97);}
+.btn-full{width:100%;}
+.btn-sm{padding:0.42rem 0.85rem;font-size:0.75rem;}
+.btn-xs{padding:0.28rem 0.6rem;font-size:0.68rem;}
+
+.btn-primary{background:linear-gradient(135deg,var(--lilac-d),var(--pink-d));color:#fff;box-shadow:0 4px 14px rgba(100,64,192,0.3);}
+.btn-primary:hover{box-shadow:0 6px 18px rgba(100,64,192,0.38);}
+.btn-mint   {background:var(--mint-m);color:var(--mint-d);border:1.5px solid var(--mint);}
+.btn-pink   {background:var(--pink-m);color:var(--pink-d);border:1.5px solid var(--pink);}
+.btn-lilac  {background:var(--lilac-m);color:var(--lilac-d);border:1.5px solid var(--lilac);}
+.btn-blue   {background:var(--blue-m);color:var(--blue-d);border:1.5px solid var(--blue);}
+.btn-danger {background:var(--danger-bg);color:var(--danger);border:1.5px solid #fcc;}
+.btn-ghost  {background:none;border:none;color:var(--soft);padding:0.3rem;}
+.btn-outline{background:none;border:1.5px solid var(--border);color:var(--mid);}
+
+.fab{
+  position:fixed;
+  bottom:calc(var(--nav) + 1rem);
+  right:1rem;
+  width:50px;height:50px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--lilac-d),var(--pink-d));
+  color:#fff;font-size:1.4rem;border:none;cursor:pointer;
+  box-shadow:0 4px 16px rgba(100,64,192,0.35);
+  display:none;align-items:center;justify-content:center;
+  transition:all 0.2s;z-index:30;
+}
+.fab.show{display:flex;}
+.fab:active{transform:scale(0.94);}
+
+/* ─── ALERTS ─── */
+.al{
+  padding:0.75rem 0.9rem;border-radius:var(--r-sm);
+  font-size:0.8rem;font-weight:600;
+  border:1.5px solid;display:flex;gap:0.5rem;align-items:flex-start;
+  margin-bottom:0.8rem;
+}
+.al-ok     {background:var(--ok-bg);    color:var(--ok);    border-color:#b0eac0;}
+.al-warn   {background:var(--warn-bg);  color:var(--warn);  border-color:#f5d080;}
+.al-danger {background:var(--danger-bg);color:var(--danger);border-color:#f5b0c0;}
+.al-info   {background:var(--info-bg);  color:var(--info);  border-color:#a0c8f0;}
+.al-pink   {background:var(--pink-m);   color:var(--pink-d);border-color:var(--pink);}
+
+/* ─── RECIPE CARD ─── */
+.rec-card{
+  background:var(--surface);
+  border-radius:var(--r);
+  border:1px solid var(--border);
+  box-shadow:var(--sh);
+  overflow:hidden;
+  margin-bottom:0.8rem;
+}
+.rec-head{
+  padding:0.8rem 1rem;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.rec-name{font-size:0.92rem;font-weight:800;color:var(--text);}
+.rec-code{font-size:0.65rem;font-weight:600;color:var(--mid);margin-top:0.1rem;}
+.rec-body{padding:0.6rem 1rem 0.8rem;}
+.ing-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:0.3rem 0;border-bottom:1px solid var(--border);
+  font-size:0.78rem;
+}
+.ing-row:last-child{border-bottom:none;}
+.ing-n{color:var(--mid);font-weight:500;}
+.ing-v{color:var(--text);font-weight:700;}
+
+/* ─── CALC BOX ─── */
+.calc-result{
+  background:linear-gradient(135deg,var(--lilac-m),var(--blue-m));
+  border-radius:var(--r);
+  border:1.5px solid var(--lilac);
+  padding:1rem 1.1rem;
+  margin-bottom:0.8rem;
+}
+.calc-result h3{font-size:0.85rem;font-weight:800;color:var(--lilac-d);margin-bottom:0.65rem;}
+.cr-row{
+  display:flex;justify-content:space-between;
+  padding:0.28rem 0;border-bottom:1px solid rgba(100,80,200,0.12);
+  font-size:0.8rem;
+}
+.cr-row:last-child{border-bottom:none;}
+.cr-row span:first-child{color:var(--mid);}
+.cr-row span:last-child{color:var(--lilac-d);font-weight:800;}
+
+/* ─── PROGRESS ─── */
+.prog{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:0.25rem;}
+.prog-fill{height:100%;border-radius:3px;transition:width 0.4s ease;}
+.pf-ok{background:linear-gradient(90deg,var(--ok),#50d890);}
+.pf-warn{background:linear-gradient(90deg,var(--warn),#f8c050);}
+.pf-danger{background:linear-gradient(90deg,var(--danger),#f07090);}
+
+/* ─── TABLE ─── */
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+table{width:100%;border-collapse:collapse;font-size:0.78rem;}
+th{
+  background:var(--lav);color:var(--lav-d);
+  padding:0.5rem 0.7rem;text-align:left;
+  font-size:0.68rem;font-weight:800;letter-spacing:0.04em;white-space:nowrap;
+}
+td{padding:0.55rem 0.7rem;border-bottom:1px solid var(--border);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:active td{background:var(--bg);}
+
+/* ─── BOTTOM NAV ─── */
+.nav{
+  height:var(--nav);
+  background:var(--surface);
+  border-top:1px solid var(--border);
+  display:flex;
+  flex-shrink:0;
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  position:relative;z-index:40;
+  box-shadow:0 -2px 16px rgba(100,60,90,0.08);
+}
+.nb{
+  flex:1;
+  background:none;border:none;cursor:pointer;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:0.2rem;padding:0.4rem 0;
+  position:relative;transition:background 0.15s;
+}
+.nb:active{background:var(--lav-m);}
+.nb-bg{
+  width:44px;height:30px;
+  border-radius:15px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.2s;
+}
+.nb.active .nb-bg{background:var(--lilac);}
+.nb-icon{font-size:1.25rem;line-height:1;}
+.nb-lbl{font-size:0.6rem;font-weight:700;color:var(--soft);transition:color 0.2s;letter-spacing:0.02em;}
+.nb.active .nb-lbl{color:var(--lilac-d);}
+.nb-dot{
+  position:absolute;top:6px;right:calc(50% - 18px);
+  width:7px;height:7px;background:var(--danger);
+  border-radius:50%;border:1.5px solid var(--surface);
+  display:none;
+}
+.nb-dot.show{display:block;}
+
+/* ─── MODAL ─── */
+.overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(44,31,40,0.45);backdrop-filter:blur(3px);
+  z-index:100;align-items:flex-end;justify-content:center;
+}
+.overlay.open{display:flex;}
+.sheet{
+  background:var(--surface);
+  border-radius:var(--r) var(--r) 0 0;
+  padding:0 0 env(safe-area-inset-bottom,1.5rem);
+  width:100%;max-height:92vh;overflow-y:auto;
+  box-shadow:0 -12px 48px rgba(44,31,40,0.18);
+  animation:su 0.22s cubic-bezier(.34,1.2,.64,1);
+}
+@keyframes su{from{transform:translateY(80px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.sheet-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0.8rem auto 0;}
+.sheet-head{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:0.9rem 1.2rem 0.5rem;
+}
+.sheet-title{font-size:1.05rem;font-weight:800;color:var(--text);}
+.sheet-close{
+  width:28px;height:28px;border-radius:50%;
+  background:var(--bg);border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.8rem;color:var(--soft);
+}
+.sheet-body{padding:0.5rem 1.2rem 1.5rem;}
+
+@media(min-width:600px){
+  .sheet{max-width:480px;border-radius:var(--r);}
+  .overlay{align-items:center;}
+  .fab{bottom:calc(var(--nav) + 1.2rem);right:1.5rem;}
+}
+
+/* ─── TOAST ─── */
+#toast{
+  position:fixed;bottom:calc(var(--nav) + 0.9rem);
+  left:50%;transform:translateX(-50%);
+  z-index:200;pointer-events:none;display:none;
+}
+#ti{
+  padding:0.65rem 1.2rem;border-radius:30px;
+  color:#fff;font-weight:700;font-size:0.82rem;
+  box-shadow:0 4px 20px rgba(0,0,0,0.16);
+  white-space:nowrap;
+}
+
+/* ─── MISC ─── */
+.divider{border:none;border-top:1px solid var(--border);margin:0.8rem 0;}
+.empty{text-align:center;padding:2rem 1rem;color:var(--soft);}
+.empty .ei{font-size:2.4rem;margin-bottom:0.4rem;}
+.empty p{font-size:0.82rem;font-weight:600;}
+.bold{font-weight:800;}
+.t-ok{color:var(--ok);}
+.t-warn{color:var(--warn);}
+.t-danger{color:var(--danger);}
+.t-mid{color:var(--mid);}
+.t-soft{color:var(--soft);}
+.t-lilac{color:var(--lilac-d);}
+.tag{
+  display:inline-block;padding:0.12rem 0.45rem;border-radius:5px;
+  font-size:0.65rem;font-weight:700;background:var(--lav);color:var(--lav-d);
+}
+.flex-end{display:flex;justify-content:flex-end;gap:0.5rem;flex-wrap:wrap;}
+.mt1{margin-top:0.8rem;}
+.mb1{margin-bottom:0.8rem;}
+.ph-pad{padding:0 1rem;}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-avatar">🍰</div>
+  <div class="hdr-info">
+    <h1>Pastelería Producción Brutal</h1>
+    <p id="hdr-date">Cargando...</p>
+  </div>
+  <div class="hdr-notif" onclick="switchScreen('productos',document.getElementById('nb-productos'))">
+    <span>🔔</span>
+    <div class="hdr-notif-dot" id="notif-dot"></div>
+  </div>
+</header>
+
+<!-- SCROLL -->
+<div class="scroll">
+
+<!-- ═══ DASHBOARD ═══ -->
+<div id="sc-dashboard" class="screen active">
+  <div class="hero">
+    <div class="hero-label">Ventas del Mes</div>
+    <div class="hero-amount" id="hero-amount">$0</div>
+    <div class="hero-sub" id="hero-sub">0 unidades vendidas</div>
+  </div>
+  <div class="chips-row" id="chips-row"></div>
+
+  <div class="sec mt1">
+    <div class="sec-head">
+      <div class="sec-title">⚠️ Stock Crítico</div>
+      <div class="sec-action" onclick="switchScreen('productos',document.getElementById('nb-productos'));setTimeout(()=>switchSubTab('prod','stock-critico',document.querySelector('#sc-productos .pill')),100)">Ver todo</div>
+    </div>
+    <div class="card" id="dash-critico"></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-head"><div class="sec-title">📈 Top Ventas</div></div>
+    <div class="card" id="dash-ventas"></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-head"><div class="sec-title">🕐 Recientes</div></div>
+    <div class="card" id="dash-recientes"></div>
+  </div>
+  <div style="height:1rem"></div>
+</div>
+
+<!-- ═══ MOVIMIENTOS ═══ -->
+<div id="sc-movimientos" class="screen">
+  <div class="ph"><div class="ph-title">Movimientos</div></div>
+  <div class="pill-tabs">
+    <button class="pill active" onclick="switchSubTab('mov','entradas',this)">⬇️ Entrada</button>
+    <button class="pill" onclick="switchSubTab('mov','salidas',this)">⬆️ Venta</button>
+    <button class="pill" onclick="switchSubTab('mov','historial',this)">📋 Historial</button>
+  </div>
+
+  <!-- Entradas -->
+  <div id="mov-entradas">
+    <div class="ph-pad">
+      <div class="card">
+        <div class="card-pad">
+          <div class="card-title">Registrar Entrada de Insumo</div>
+          <div class="fg"><label>Fecha</label><input type="date" id="ent-fecha"></div>
+          <div class="fg"><label>Insumo / Materia Prima</label><select id="ent-insumo"></select></div>
+          <div class="row2">
+            <div class="fg" style="margin:0"><label>Cantidad</label><input type="number" id="ent-cantidad" placeholder="0" min="0" step="0.01"></div>
+            <div class="fg" style="margin:0"><label>Unidad</label><input type="text" id="ent-unidad" readonly></div>
+          </div>
+          <div class="mt1"></div>
+          <div class="fg"><label>Precio Unitario (CLP)</label><input type="number" id="ent-precio" placeholder="0"></div>
+          <div class="fg"><label>Proveedor / Nota</label><input type="text" id="ent-proveedor" placeholder="Opcional..."></div>
+          <button class="btn btn-mint btn-full" onclick="registrarEntrada()">✅ Registrar Entrada</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-pad">
+          <div class="card-title">Stock Actual de Insumos</div>
+          <div class="tw"><table>
+            <thead><tr><th>Insumo</th><th>Stock</th><th>Un.</th><th>Estado</th></tr></thead>
+            <tbody id="stock-tbody"></tbody>
+          </table></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Salidas -->
+  <div id="mov-salidas" style="display:none">
+    <div class="ph-pad">
+      <div class="card">
+        <div class="card-pad">
+          <div class="card-title">Registrar Venta / Salida</div>
+          <div class="fg"><label>Fecha</label><input type="date" id="sal-fecha"></div>
+          <div class="fg"><label>Tipo</label>
+            <select id="sal-tipo" onchange="toggleSalidaTipo()">
+              <option value="venta">🛍️ Venta de Producto</option>
+              <option value="insumo">📦 Salida de Insumo</option>
+            </select>
+          </div>
+          <div id="sal-prod-sec">
+            <div class="fg"><label>Producto</label><select id="sal-producto" onchange="onSalidaProd()"></select></div>
+            <div class="row2">
+              <div class="fg" style="margin:0"><label>Unidades</label><input type="number" id="sal-cant-prod" placeholder="0" min="1"></div>
+              <div class="fg" style="margin:0"><label>Precio c/u (CLP)</label><input type="number" id="sal-precio-venta" placeholder="0"></div>
+            </div>
+            <div class="mt1"></div>
+            <div class="al al-pink" id="sal-warn" style="display:none">⚠️ Los ingredientes se descontarán del stock.</div>
+          </div>
+          <div id="sal-ins-sec" style="display:none">
+            <div class="fg"><label>Insumo</label><select id="sal-ins-sel"></select></div>
+            <div class="fg"><label>Cantidad</label><input type="number" id="sal-ins-cant" placeholder="0" step="0.01"></div>
+          </div>
+          <div class="fg"><label>Observación</label><input type="text" id="sal-obs" placeholder="Canal, cliente..."></div>
+          <button class="btn btn-pink btn-full" onclick="registrarSalida()">📤 Registrar Salida</button>
+        </div>
+      </div>
+      <div class="card"><div class="card-pad">
+        <div class="card-title">Ventas del Mes</div>
+        <div id="ventas-mes"></div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- Historial -->
+  <div id="mov-historial" style="display:none">
+    <div class="ph-pad">
+      <div class="card"><div class="card-pad">
+        <div class="card-title">Historial</div>
+        <div class="row2" style="margin-bottom:0.7rem">
+          <div class="fg" style="margin:0"><label>Desde</label><input type="date" id="hist-desde"></div>
+          <div class="fg" style="margin:0"><label>Hasta</label><input type="date" id="hist-hasta"></div>
+        </div>
+        <div style="display:flex;gap:0.5rem;margin-bottom:0.8rem;">
+          <select id="hist-tipo" style="flex:1"><option value="">Todos</option><option value="entrada">Entradas</option><option value="venta">Ventas</option><option value="salida">Salidas</option></select>
+          <button class="btn btn-lilac btn-sm" onclick="renderHistorial()">Filtrar</button>
+          <button class="btn btn-outline btn-sm" onclick="exportCSV()">CSV</button>
+        </div>
+        <div class="tw"><table>
+          <thead><tr><th>Fecha</th><th>Tipo</th><th>Descripción</th><th>Cant.</th><th>Total</th></tr></thead>
+          <tbody id="hist-tbody"></tbody>
+        </table></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PRODUCTOS ═══ -->
+<div id="sc-productos" class="screen">
+  <div class="ph">
+    <div class="ph-title">Productos</div>
+    <button class="btn btn-primary btn-sm" onclick="openModalProd()">+ Nuevo</button>
+  </div>
+  <div class="pill-tabs">
+    <button class="pill active" onclick="switchSubTab('prod','lista',this)">📋 Lista</button>
+    <button class="pill" onclick="switchSubTab('prod','analisis',this)">📈 Análisis</button>
+    <button class="pill" onclick="switchSubTab('prod','stock-critico',this)">⚠️ Crítico</button>
+  </div>
+
+  <div id="prod-lista" class="ph-pad">
+    <div id="prod-list-container"></div>
+  </div>
+  <div id="prod-analisis" style="display:none" class="ph-pad">
+    <div id="analisis-chips" class="chips-row" style="padding:0;margin-bottom:0.8rem"></div>
+    <div class="card"><div class="card-pad">
+      <div class="card-title">Ventas por Producto — Mes Actual</div>
+      <div id="analisis-chart"></div>
+    </div></div>
+  </div>
+  <div id="prod-stock-critico" style="display:none" class="ph-pad">
+    <div id="stock-critico-body"></div>
+  </div>
+  <div style="height:1rem"></div>
+</div>
+
+<!-- ═══ CALCULADORA ═══ -->
+<div id="sc-calculadora" class="screen">
+  <div class="ph"><div class="ph-title">Calculadora</div></div>
+  <div class="ph-pad">
+    <div class="card mb1"><div class="card-pad">
+      <div class="card-title">Configurar Producción</div>
+      <div class="fg"><label>Producto</label><select id="calc-prod" onchange="calcularProd()"></select></div>
+      <div class="row2">
+        <div class="fg" style="margin:0"><label>Unidades</label><input type="number" id="calc-cant" value="1" min="1" oninput="calcularProd()"></div>
+        <div class="fg" style="margin:0"><label>¿Descontar stock?</label>
+          <select id="calc-desc">
+            <option value="no">Solo calcular</option>
+            <option value="si">Sí, descontar</option>
+          </select>
+        </div>
+      </div>
+      <div class="al al-info mt1" id="calc-info"></div>
+      <button class="btn btn-primary btn-full mt1" onclick="ejecutarProd()">🎂 Calcular / Producir</button>
+    </div></div>
+    <div class="calc-result" id="calc-res">
+      <h3>🧾 Ingredientes necesarios</h3>
+      <p style="color:var(--mid);font-size:0.8rem;font-weight:500">Selecciona un producto y cantidad.</p>
+    </div>
+    <div class="card" id="calc-check" style="display:none"><div class="card-pad">
+      <div class="card-title">✅ Verificación de Stock</div>
+      <div id="calc-check-body"></div>
+    </div></div>
+    <div style="height:1rem"></div>
+  </div>
+</div>
+
+<!-- ═══ RECETAS ═══ -->
+<div id="sc-recetas" class="screen">
+  <div class="ph"><div class="ph-title">Recetas</div></div>
+  <div class="ph-pad" style="padding-bottom:0.3rem">
+    <input type="text" id="rec-search" placeholder="🔍 Buscar receta..." oninput="renderRecetas()">
+  </div>
+  <div class="pill-tabs">
+    <button class="pill active" onclick="filterRec('todas',this)">Todas</button>
+    <button class="pill" onclick="filterRec('brownie',this)">🍫 Brownies</button>
+    <button class="pill" onclick="filterRec('cheescake',this)">🍮 Cheescakes</button>
+    <button class="pill" onclick="filterRec('galleta',this)">🍪 Galletas</button>
+    <button class="pill" onclick="filterRec('rollito',this)">🥐 Rollitos</button>
+    <button class="pill" onclick="filterRec('base',this)">🧁 Bases</button>
+  </div>
+  <div class="ph-pad" id="recetas-list"></div>
+  <div style="height:1rem"></div>
+</div>
+
+</div><!-- /scroll -->
+
+<!-- BOTTOM NAV -->
+<nav class="nav">
+  <button class="nb active" id="nb-dashboard" onclick="switchScreen('dashboard',this)">
+    <div class="nb-bg"><span class="nb-icon">🏠</span></div>
+    <span class="nb-lbl">Inicio</span>
+  </button>
+  <button class="nb" id="nb-movimientos" onclick="switchScreen('movimientos',this)">
+    <div class="nb-bg"><span class="nb-icon">📦</span></div>
+    <span class="nb-lbl">Movimientos</span>
+  </button>
+  <button class="nb" id="nb-productos" onclick="switchScreen('productos',this)">
+    <div class="nb-dot" id="dot-productos"></div>
+    <div class="nb-bg"><span class="nb-icon">🛍️</span></div>
+    <span class="nb-lbl">Productos</span>
+  </button>
+  <button class="nb" id="nb-calculadora" onclick="switchScreen('calculadora',this)">
+    <div class="nb-bg"><span class="nb-icon">🧮</span></div>
+    <span class="nb-lbl">Calcular</span>
+  </button>
+  <button class="nb" id="nb-recetas" onclick="switchScreen('recetas',this)">
+    <div class="nb-bg"><span class="nb-icon">📖</span></div>
+    <span class="nb-lbl">Recetas</span>
+  </button>
+</nav>
+
+<!-- MODAL PRODUCTO -->
+<div class="overlay" id="modal-prod">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-head">
+      <div class="sheet-title" id="modal-prod-title">Nuevo Producto</div>
+      <button class="sheet-close" onclick="closeModal('modal-prod')">✕</button>
+    </div>
+    <div class="sheet-body">
+      <input type="hidden" id="pe-cod-edit">
+      <div class="row2">
+        <div class="fg" style="margin:0 0 0.85rem"><label>Código</label><input type="text" id="pe-cod" placeholder="3025"></div>
+        <div class="fg" style="margin:0 0 0.85rem"><label>Categoría</label>
+          <select id="pe-cat"><option>Brownies</option><option>Cheescakes</option><option>Galletas</option><option>Rollitos</option><option>Bases</option><option>Frostings</option><option>Otros</option></select>
+        </div>
+      </div>
+      <div class="fg"><label>Nombre del Producto</label><input type="text" id="pe-nom" placeholder="Nombre..."></div>
+      <div class="row2">
+        <div class="fg" style="margin:0 0 0.85rem"><label>Precio Venta (CLP)</label><input type="number" id="pe-precio" placeholder="0"></div>
+        <div class="fg" style="margin:0 0 0.85rem"><label>Stock actual (un.)</label><input type="number" id="pe-stock" placeholder="0"></div>
+      </div>
+      <div class="row2">
+        <div class="fg" style="margin:0 0 0.85rem"><label>Stock mínimo</label><input type="number" id="pe-min" placeholder="5"></div>
+        <div class="fg" style="margin:0 0 0.85rem"><label>Receta</label><select id="pe-receta"></select></div>
+      </div>
+      <div class="flex-end mt1">
+        <button class="btn btn-outline" onclick="closeModal('modal-prod')">Cancelar</button>
+        <button class="btn btn-primary" onclick="guardarProd()">💾 Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"><div id="ti"></div></div>
+
+<script>
+// ══ RECETAS DATA ══
+const RD = {
+  "Brownie":{c:3001,col:'pink',i:[{n:"chocolate",q:300,u:"g"},{n:"mantequilla",q:200,u:"g"},{n:"azucar",q:0.35,u:"kg"},{n:"huevos",q:4,u:"un"},{n:"harina panificacion",q:0.15,u:"kg"},{n:"cacao amargo",q:60,u:"g"},{n:"sal",q:0.004,u:"kg"}]},
+  "Brownie pistacho":{c:3002,col:'mint',i:[{n:"chocolate",q:300,u:"g"},{n:"mantequilla",q:200,u:"g"},{n:"azucar",q:0.35,u:"kg"},{n:"huevos",q:4,u:"un"},{n:"harina panificacion",q:0.15,u:"kg"},{n:"cacao amargo",q:60,u:"g"},{n:"sal",q:0.004,u:"kg"},{n:"chocolate blanco",q:0.15,u:"kg"},{n:"crema",q:0.1,u:"l"},{n:"pasta de pistacho",q:60,u:"g"},{n:"pistacho molido",q:50,u:"g"}]},
+  "Brownie Ferrero":{c:3003,col:'peach',i:[{n:"chocolate",q:300,u:"g"},{n:"mantequilla",q:210,u:"g"},{n:"azucar",q:0.35,u:"kg"},{n:"huevos",q:4,u:"un"},{n:"harina panificacion",q:0.15,u:"kg"},{n:"cacao amargo",q:60,u:"g"},{n:"sal",q:0.004,u:"kg"},{n:"chocolate leche",q:0.15,u:"kg"},{n:"crema",q:0.1,u:"l"},{n:"pasta avellana",q:60,u:"g"},{n:"avellana europea",q:50,u:"g"}]},
+  "Cheescake":{c:3004,col:'blue',i:[{n:"queso crema",q:0.75,u:"kg"},{n:"crema",q:0.165,u:"l"},{n:"azucar",q:0.2,u:"kg"},{n:"huevos",q:3,u:"un"},{n:"vainilla",q:0.03,u:"l"},{n:"harina panificacion",q:0.2,u:"kg"},{n:"mantequilla",q:100,u:"g"},{n:"azucar flor",q:0.07,u:"kg"},{n:"yema de huevo",q:1,u:"un"}]},
+  "Cheescake Pistacho":{c:3005,col:'mint',i:[{n:"queso crema",q:0.75,u:"kg"},{n:"crema",q:0.365,u:"l"},{n:"azucar",q:0.2,u:"kg"},{n:"huevos",q:3,u:"un"},{n:"vainilla",q:0.03,u:"l"},{n:"harina panificacion",q:0.2,u:"kg"},{n:"mantequilla",q:100,u:"g"},{n:"azucar flor",q:0.07,u:"kg"},{n:"yema de huevo",q:1,u:"un"},{n:"chocolate blanco",q:0.3,u:"kg"},{n:"pasta de pistacho",q:120,u:"g"}]},
+  "Cheescake Oreo":{c:3006,col:'lav',i:[{n:"queso crema",q:0.75,u:"kg"},{n:"crema",q:0.165,u:"l"},{n:"azucar",q:0.2,u:"kg"},{n:"huevos",q:3,u:"un"},{n:"vainilla",q:0.03,u:"l"},{n:"harina panificacion",q:0.2,u:"kg"},{n:"mantequilla",q:220,u:"g"},{n:"azucar flor",q:0.07,u:"kg"},{n:"galleta molida oreo",q:0.5,u:"kg"},{n:"yema de huevo",q:1,u:"un"}]},
+  "Cheescake Maracuya":{c:3007,col:'lemon',i:[{n:"queso crema",q:0.75,u:"kg"},{n:"crema",q:0.165,u:"l"},{n:"azucar",q:0.2,u:"kg"},{n:"huevos",q:3,u:"un"},{n:"vainilla",q:0.03,u:"l"},{n:"harina panificacion",q:0.2,u:"kg"},{n:"mantequilla",q:100,u:"g"},{n:"azucar flor",q:0.07,u:"kg"},{n:"yema de huevo",q:1,u:"un"},{n:"reduccion maracuya",q:1,u:"kg"}]},
+  "Cheescake Berries":{c:3008,col:'pink',i:[{n:"queso crema",q:0.75,u:"kg"},{n:"crema",q:0.165,u:"l"},{n:"azucar",q:0.2,u:"kg"},{n:"huevos",q:3,u:"un"},{n:"vainilla",q:0.03,u:"l"},{n:"harina panificacion",q:0.2,u:"kg"},{n:"mantequilla",q:100,u:"g"},{n:"azucar flor",q:0.07,u:"kg"},{n:"yema de huevo",q:1,u:"un"},{n:"reduccion berries",q:250,u:"g"}]},
+  "Galleta zanahoria":{c:3009,col:'lemon',i:[{n:"mantequilla",q:261,u:"g"},{n:"azucar rubia",q:229,u:"g"},{n:"azucar",q:0.103,u:"kg"},{n:"huevos",q:2,u:"un"},{n:"harina panificacion",q:0.539,u:"kg"},{n:"sal",q:0.005,u:"kg"},{n:"maicena",q:0.005,u:"kg"},{n:"bicarbonato",q:0.005,u:"kg"},{n:"canela",q:0.12,u:"g"},{n:"nueces",q:0.1,u:"kg"},{n:"chocolate blanco",q:200,u:"g"},{n:"zanahoria",q:0.12,u:"kg"}]},
+  "Galletas Red velvet":{c:3010,col:'pink',i:[{n:"mantequilla",q:238,u:"g"},{n:"azucar",q:0.272,u:"kg"},{n:"huevos",q:2,u:"un"},{n:"cacao amargo",q:12,u:"g"},{n:"sal",q:0.004,u:"kg"},{n:"maicena",q:0.004,u:"kg"},{n:"polvo de hornear",q:4,u:"g"},{n:"chocolate blanco",q:0.178,u:"kg"}]},
+  "Galletas chips":{c:3011,col:'peach',i:[{n:"mantequilla",q:261,u:"g"},{n:"azucar rubia",q:229,u:"g"},{n:"azucar",q:103,u:"g"},{n:"huevos",q:126,u:"g"},{n:"harina panificacion",q:0.539,u:"kg"},{n:"sal",q:0.005,u:"kg"},{n:"maicena",q:0.005,u:"kg"},{n:"bicarbonato",q:0.005,u:"kg"},{n:"chocolate leche",q:0.37,u:"kg"}]},
+  "Galletas Oreo":{c:3012,col:'lav',i:[{n:"mantequilla",q:261,u:"g"},{n:"azucar",q:0.332,u:"kg"},{n:"huevos",q:726,u:"g"},{n:"sal",q:0.004,u:"kg"},{n:"bicarbonato",q:0.005,u:"kg"},{n:"galletas oreo molidas",q:190,u:"g"},{n:"chocolate leche",q:200,u:"g"},{n:"harina panificacion",q:0.54,u:"kg"}]},
+  "Galletas Café":{c:3013,col:'powder',i:[{n:"mantequilla",q:200,u:"g"},{n:"azucar flor",q:0.12,u:"kg"},{n:"huevos",q:1,u:"un"},{n:"harina panificacion",q:0.3,u:"kg"},{n:"maicena",q:0.03,u:"kg"},{n:"sal",q:0.005,u:"kg"},{n:"vainilla",q:0.015,u:"l"}]},
+  "Rollito canela":{c:3014,col:'lemon',i:[{n:"harina panificacion",q:2.664,u:"kg"},{n:"levadura",q:24,u:"g"},{n:"agua",q:0.664,u:"l"},{n:"leche",q:0.8,u:"l"},{n:"azucar",q:0.264,u:"kg"},{n:"sal",q:20,u:"g"},{n:"leche en polvo",q:52,u:"g"},{n:"huevos",q:4,u:"un"},{n:"mantequilla",q:464,u:"g"},{n:"canela",q:0.025,u:"g"},{n:"azucar rubia",q:80,u:"g"}]},
+  "Rollito pistacho":{c:3015,col:'mint',i:[{n:"harina panificacion",q:2.664,u:"kg"},{n:"levadura",q:24,u:"g"},{n:"agua",q:0.664,u:"l"},{n:"leche",q:0.8,u:"l"},{n:"azucar",q:0.264,u:"kg"},{n:"sal",q:20,u:"g"},{n:"leche en polvo",q:52,u:"g"},{n:"huevos",q:4,u:"un"},{n:"mantequilla",q:344,u:"g"},{n:"pasta de pistacho",q:150,u:"g"},{n:"chocolate blanco",q:0.1,u:"kg"},{n:"azucar rubia",q:80,u:"g"}]},
+  "Rollito Berries":{c:3016,col:'pink',i:[{n:"harina panificacion",q:2.664,u:"kg"},{n:"levadura",q:24,u:"g"},{n:"agua",q:0.664,u:"l"},{n:"leche",q:0.8,u:"l"},{n:"azucar",q:0.264,u:"kg"},{n:"sal",q:20,u:"g"},{n:"leche en polvo",q:52,u:"g"},{n:"huevos",q:4,u:"un"},{n:"mantequilla",q:264,u:"g"},{n:"reduccion berries",q:300,u:"g"},{n:"pastelera",q:100,u:"g"}]},
+  "Rollito Ferrero":{c:3017,col:'peach',i:[{n:"harina panificacion",q:2.664,u:"kg"},{n:"levadura",q:24,u:"g"},{n:"agua",q:0.664,u:"l"},{n:"leche",q:0.8,u:"l"},{n:"azucar",q:0.264,u:"kg"},{n:"sal",q:20,u:"g"},{n:"leche en polvo",q:52,u:"g"},{n:"huevos",q:4,u:"un"},{n:"mantequilla",q:344,u:"g"},{n:"avellana europea",q:200,u:"g"},{n:"chocolate leche",q:100,u:"g"},{n:"azucar rubia",q:80,u:"g"}]},
+  "Reduccion berries":{c:3018,col:'pink',i:[{n:"mix berries",q:1,u:"kg"},{n:"azucar",q:0.24,u:"kg"}]},
+  "Reduccion maracuya":{c:3019,col:'lemon',i:[{n:"pulpa maracuya",q:1,u:"kg"},{n:"azucar",q:0.24,u:"kg"}]},
+  "Pastelera":{c:3020,col:'blue',i:[{n:"leche",q:1.5,u:"l"},{n:"yema de huevo",q:9,u:"un"},{n:"maicena",q:0.12,u:"kg"},{n:"azucar",q:0.3,u:"kg"}]},
+  "Frosting":{c:3021,col:'lav',i:[{n:"queso crema",q:1.2,u:"kg"},{n:"azucar flor",q:0.8,u:"kg"},{n:"crema",q:0.5,u:"l"},{n:"leche",q:0.2,u:"l"}]},
+  "Frosting Pistacho":{c:3022,col:'mint',i:[{n:"queso crema",q:1.2,u:"kg"},{n:"azucar flor",q:0.8,u:"kg"},{n:"crema",q:0.5,u:"l"},{n:"leche",q:0.2,u:"l"},{n:"pasta de pistacho",q:0.2,u:"kg"}]},
+  "Frosting Ferrero":{c:3023,col:'peach',i:[{n:"queso crema",q:1.2,u:"kg"},{n:"azucar flor",q:0.8,u:"kg"},{n:"crema",q:0.5,u:"l"},{n:"leche",q:0.2,u:"l"},{n:"pasta de avellana",q:0.2,u:"kg"},{n:"nutella",q:0.1,u:"kg"}]},
+};
+
+const INSUMOS_BASE=[
+  {n:"VAINILLA",u:"LITRO",cat:"Esencias",p:1207},{n:"MANTEQUILLA",u:"250 GRS",cat:"Lacteos",p:2837},
+  {n:"AZUCAR RUBIA",u:"500 GRS",cat:"Azúcares",p:1122},{n:"BICARBONATO DE SODIO",u:"KG",cat:"Leudantes",p:1781},
+  {n:"CANELA MOLIDA",u:"250 GRS",cat:"Especias",p:3906},{n:"POLVOS DE HORNEAR",u:"500 GRS",cat:"Leudantes",p:1384},
+  {n:"CHOCOLATE LECHE",u:"KG",cat:"Chocolates",p:19442},{n:"CHOCOLATE BLANCO",u:"KG",cat:"Chocolates",p:25300},
+  {n:"CLAVO DE OLOR",u:"4 GRS",cat:"Especias",p:432},{n:"PULPA DE MARACUYA",u:"KG",cat:"Pulpas",p:6544},
+  {n:"CREMA DE LECHE",u:"LITRO",cat:"Lacteos",p:4096},{n:"AZUCAR FLOR",u:"KG",cat:"Azúcares",p:1522},
+  {n:"MIX BERRIES",u:"KG",cat:"Pulpas",p:6227},{n:"COLAPEZ EN HOJA",u:"KG",cat:"Espesantes",p:46469},
+  {n:"LECHE",u:"LITRO",cat:"Lacteos",p:990},{n:"GALLETA OREO",u:"108 GR",cat:"Confites",p:614},
+  {n:"GALLETA OREO MOLIDA",u:"4 KG",cat:"Confites",p:21869},{n:"CACAO AMARGO",u:"KG",cat:"Chocolates",p:9317},
+  {n:"HARINA PANIFICACION",u:"25 KG",cat:"Harinas",p:18554},{n:"LECHE CONDENSADA",u:"6 KG",cat:"Lacteos",p:23508},
+  {n:"MIEL DE ABEJAS",u:"KG",cat:"Azúcares",p:4042},{n:"HUEVOS",u:"180 UN",cat:"Huevos",p:35714},
+  {n:"LEVADURA",u:"500 GRS",cat:"Leudantes",p:2260},{n:"CHOCOLATE CARAVELLA",u:"780 GRS",cat:"Chocolates",p:4865},
+  {n:"QUESO CREMA",u:"1,36 KG",cat:"Lacteos",p:6690},{n:"REDUCCION BERRIES",u:"KG",cat:"Pulpas",p:1648},
+  {n:"REDUCCION MARACUYA",u:"KG",cat:"Pulpas",p:1727},{n:"ZANAHORIA",u:"KG",cat:"Verduras",p:1190},
+  {n:"YEMA DE HUEVO",u:"UN",cat:"Huevos",p:60},{n:"NUECES",u:"KG",cat:"Frutos secos",p:11949},
+  {n:"SAL",u:"KG",cat:"Condimentos",p:400},{n:"AZUCAR",u:"KG",cat:"Azúcares",p:900},
+  {n:"MAICENA",u:"KG",cat:"Harinas",p:2500},{n:"CHOCOLATE",u:"KG",cat:"Chocolates",p:15000},
+  {n:"AGUA",u:"LITRO",cat:"Líquidos",p:0},
+];
+
+// ══ STATE ══
+const L=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch{return d;}};
+const S=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+
+let stock=L('p3_stock',{});
+let movs=L('p3_movs',[]);
+let prods=L('p3_prods',[]);
+let recFilt='todas';
+
+if(!Object.keys(stock).length){INSUMOS_BASE.forEach(i=>{stock[i.n]={s:0,u:i.u,p:i.p,cat:i.cat};});S('p3_stock',stock);}
+if(!prods.length){
+  prods=[
+    {cod:"3001",nom:"Brownie",cat:"Brownies",pv:3500,st:0,min:5,rec:"Brownie"},
+    {cod:"3002",nom:"Brownie pistacho",cat:"Brownies",pv:4500,st:0,min:5,rec:"Brownie pistacho"},
+    {cod:"3003",nom:"Brownie Ferrero",cat:"Brownies",pv:4500,st:0,min:5,rec:"Brownie Ferrero"},
+    {cod:"3004",nom:"Cheescake",cat:"Cheescakes",pv:18000,st:0,min:3,rec:"Cheescake"},
+    {cod:"3005",nom:"Cheescake Pistacho",cat:"Cheescakes",pv:22000,st:0,min:3,rec:"Cheescake Pistacho"},
+    {cod:"3006",nom:"Cheescake Oreo",cat:"Cheescakes",pv:20000,st:0,min:3,rec:"Cheescake Oreo"},
+    {cod:"3007",nom:"Cheescake Maracuya",cat:"Cheescakes",pv:20000,st:0,min:3,rec:"Cheescake Maracuya"},
+    {cod:"3008",nom:"Cheescake Berries",cat:"Cheescakes",pv:20000,st:0,min:3,rec:"Cheescake Berries"},
+    {cod:"3009",nom:"Galleta zanahoria",cat:"Galletas",pv:1800,st:0,min:10,rec:"Galleta zanahoria"},
+    {cod:"3010",nom:"Galletas Red velvet",cat:"Galletas",pv:1800,st:0,min:10,rec:"Galletas Red velvet"},
+    {cod:"3011",nom:"Galletas chips",cat:"Galletas",pv:1800,st:0,min:10,rec:"Galletas chips"},
+    {cod:"3012",nom:"Galletas Oreo",cat:"Galletas",pv:1800,st:0,min:10,rec:"Galletas Oreo"},
+    {cod:"3013",nom:"Galletas Café",cat:"Galletas",pv:1800,st:0,min:10,rec:"Galletas Café"},
+    {cod:"3014",nom:"Rollito canela",cat:"Rollitos",pv:2500,st:0,min:8,rec:"Rollito canela"},
+    {cod:"3015",nom:"Rollito pistacho",cat:"Rollitos",pv:3200,st:0,min:8,rec:"Rollito pistacho"},
+    {cod:"3016",nom:"Rollito Berries",cat:"Rollitos",pv:3000,st:0,min:8,rec:"Rollito Berries"},
+    {cod:"3017",nom:"Rollito Ferrero",cat:"Rollitos",pv:3200,st:0,min:8,rec:"Rollito Ferrero"},
+  ];
+  S('p3_prods',prods);
+}
+
+// ══ UTILS ══
+const $=id=>document.getElementById(id);
+const fmt=n=>new Intl.NumberFormat('es-CL').format(Math.round(n));
+const fmtD=d=>{try{return new Date(d+'T12:00:00').toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit'});}catch{return d;}};
+const today=()=>new Date().toISOString().split('T')[0];
+const cap=s=>s?s[0].toUpperCase()+s.slice(1):s;
+const fmtN=n=>n%1===0?n:parseFloat(n.toFixed(3));
+const ICONS={Brownies:'🍫',Cheescakes:'🍮',Galletas:'🍪',Rollitos:'🥐',Bases:'🧁',Frostings:'🎂',Otros:'🛍️'};
+const COLS={pink:'li-pink',blue:'li-blue',mint:'li-mint',lav:'li-lav',lemon:'li-lemon',peach:'li-peach',lilac:'li-lilac',powder:'li-powder'};
+
+function toast(msg,t='ok'){
+  const el=$('toast'),ti=$('ti');
+  ti.textContent=msg;
+  ti.style.background=t==='ok'?'var(--ok)':t==='danger'?'var(--danger)':'var(--warn)';
+  el.style.display='block';
+  clearTimeout(el._t);el._t=setTimeout(()=>el.style.display='none',2600);
+}
+
+// ══ NAVIGATION ══
+function switchScreen(name,btn){
+  document.querySelectorAll('.screen').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(e=>e.classList.remove('active'));
+  $('sc-'+name).classList.add('active');
+  (btn||$('nb-'+name)).classList.add('active');
+  document.querySelector('.scroll').scrollTop=0;
+  renderScreen(name);
+}
+
+function switchSubTab(grp,name,btn){
+  const ctx=grp==='mov'?$('sc-movimientos'):$('sc-productos');
+  ctx.querySelectorAll('.pill').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(grp==='mov'){
+    ['entradas','salidas','historial'].forEach(id=>$('mov-'+id).style.display=id===name?'':'none');
+    if(name==='salidas')renderVentasMes();
+    if(name==='historial')renderHistorial();
+  }else{
+    ['lista','analisis','stock-critico'].forEach(id=>$('prod-'+id).style.display=id===name?'':'none');
+    if(name==='analisis')renderAnalisis();
+    if(name==='stock-critico')renderStockCritico();
+    if(name==='lista')renderProdLista();
+  }
+}
+
+function renderScreen(name){
+  if(name==='dashboard')renderDash();
+  if(name==='movimientos'){initMovForm();renderStockTable();}
+  if(name==='productos')renderProdLista();
+  if(name==='calculadora')initCalc();
+  if(name==='recetas')renderRecetas();
+}
+
+// ══ DASHBOARD ══
+function renderDash(){
+  const now=new Date();
+  $('hdr-date').textContent=now.toLocaleDateString('es-CL',{weekday:'short',day:'numeric',month:'short'});
+  const vm=movs.filter(m=>{const d=new Date(m.fecha+'T12:00:00');return m.tipo==='venta'&&d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();});
+  const tv=vm.reduce((a,b)=>a+(b.total||0),0);
+  const uv=vm.reduce((a,b)=>a+b.cantidad,0);
+  const sinSt=Object.values(stock).filter(i=>i.s<=0).length;
+  const crits=prods.filter(p=>p.st<=p.min).length;
+  $('hero-amount').textContent='$'+fmt(tv);
+  $('hero-sub').textContent=uv+' unidades vendidas este mes';
+  $('notif-dot').classList.toggle('show',crits>0||sinSt>0);
+  $('dot-productos').classList.toggle('show',crits>0);
+
+  $('chips-row').innerHTML=`
+    <div class="chip"><div class="chip-icon">🛍️</div><div class="chip-val">${prods.length}</div><div class="chip-lbl">Productos</div></div>
+    <div class="chip"><div class="chip-icon">📦</div><div class="chip-val" style="color:${sinSt>0?'var(--danger)':'var(--ok)'}">${sinSt}</div><div class="chip-lbl">Sin Stock</div></div>
+    <div class="chip"><div class="chip-icon">⚠️</div><div class="chip-val" style="color:${crits>0?'var(--warn)':'var(--ok)'}">${crits}</div><div class="chip-lbl">Stock Crítico</div></div>
+    <div class="chip"><div class="chip-icon">📋</div><div class="chip-val">${movs.length}</div><div class="chip-lbl">Movimientos</div></div>
+  `;
+
+  const criticos=Object.entries(stock).filter(([k,v])=>v.s<=2).slice(0,6);
+  $('dash-critico').innerHTML=criticos.length===0
+    ?'<div class="card-pad"><div class="al al-ok">✅ Todos los insumos tienen stock</div></div>'
+    :criticos.map(([k,v])=>`<div class="list-row">
+        <div class="list-icon ${v.s<=0?'li-pink':'li-lemon'}">${v.s<=0?'🔴':'🟡'}</div>
+        <div class="list-body"><div class="list-name">${k}</div><div class="list-sub">${v.cat}</div></div>
+        <div class="list-right"><span class="badge ${v.s<=0?'b-danger':'b-warn'}">${v.s<=0?'Agotado':'Bajo'}</span></div>
+      </div>`).join('');
+
+  const ag={};vm.forEach(m=>{if(!ag[m.desc])ag[m.desc]={u:0,t:0};ag[m.desc].u+=m.cantidad;ag[m.desc].t+=m.total;});
+  const topV=Object.entries(ag).sort((a,b)=>b[1].t-a[1].t).slice(0,5);
+  $('dash-ventas').innerHTML=topV.length===0
+    ?'<div class="card-pad empty"><div class="ei">📊</div><p>Sin ventas este mes</p></div>'
+    :topV.map(([k,v],i)=>{
+      const cols=['li-mint','li-pink','li-blue','li-lemon','li-peach'];
+      return `<div class="list-row">
+        <div class="list-icon ${cols[i%cols.length]}">${['🥇','🥈','🥉','4️⃣','5️⃣'][i]}</div>
+        <div class="list-body"><div class="list-name">${k}</div><div class="list-sub">${v.u} unidades</div></div>
+        <div class="list-right"><div class="list-val t-ok">$${fmt(v.t)}</div></div>
+      </div>`;}).join('');
+
+  const rec=[...movs].sort((a,b)=>b.id-a.id).slice(0,5);
+  $('dash-recientes').innerHTML=rec.length===0
+    ?'<div class="card-pad empty"><div class="ei">📋</div><p>Sin movimientos aún</p></div>'
+    :rec.map(m=>`<div class="list-row">
+        <div class="list-icon ${m.tipo==='entrada'?'li-mint':m.tipo==='venta'?'li-pink':'li-lemon'}">${m.tipo==='entrada'?'⬇️':m.tipo==='venta'?'💰':'⬆️'}</div>
+        <div class="list-body"><div class="list-name" style="font-size:0.8rem">${m.desc||m.descripcion||''}</div><div class="list-sub">${fmtD(m.fecha)}</div></div>
+        <div class="list-right"><div class="list-val" style="font-size:0.8rem">$${fmt(m.total||0)}</div></div>
+      </div>`).join('');
+}
+
+// ══ MOV FORM ══
+function initMovForm(){
+  const opts=Object.keys(stock).sort();
+  const ei=$('ent-insumo');
+  if(ei){
+    ei.innerHTML=opts.map(n=>`<option value="${n}">${n}</option>`).join('');
+    ei.onchange=()=>{const i=stock[ei.value];$('ent-unidad').value=i?i.u:'';$('ent-precio').value=i?i.p:'';};
+    ei.dispatchEvent(new Event('change'));
+  }
+  const si=$('sal-ins-sel');if(si)si.innerHTML=opts.map(n=>`<option value="${n}">${n}</option>`).join('');
+  const sp=$('sal-producto');if(sp)sp.innerHTML=prods.map(p=>`<option value="${p.nom}">${p.nom}</option>`).join('');
+  if(!$('ent-fecha').value)$('ent-fecha').value=today();
+  if(!$('sal-fecha').value)$('sal-fecha').value=today();
+}
+
+function registrarEntrada(){
+  const fecha=$('ent-fecha').value,ins=$('ent-insumo').value,
+    cant=parseFloat($('ent-cantidad').value),
+    precio=parseFloat($('ent-precio').value)||0,
+    prov=$('ent-proveedor').value;
+  if(!fecha||!ins||isNaN(cant)||cant<=0){toast('Completa los campos requeridos.','danger');return;}
+  stock[ins].s+=cant;S('p3_stock',stock);
+  movs.push({id:Date.now(),fecha,tipo:'entrada',desc:ins,descripcion:ins,cantidad:cant,total:cant*precio,obs:prov});
+  S('p3_movs',movs);
+  $('ent-cantidad').value='';
+  renderStockTable();
+  toast(`✅ ${fmtN(cant)} de ${ins}`);
+}
+
+function renderStockTable(){
+  const tb=$('stock-tbody');if(!tb)return;
+  tb.innerHTML=Object.entries(stock).sort((a,b)=>a[0].localeCompare(b[0])).map(([n,i])=>`<tr>
+    <td style="font-weight:600;font-size:0.78rem;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${n}</td>
+    <td class="bold">${fmtN(i.s)}</td>
+    <td class="t-soft" style="font-size:0.68rem">${i.u}</td>
+    <td><span class="badge ${i.s<=0?'b-danger':i.s<=2?'b-warn':'b-ok'}">${i.s<=0?'🔴':i.s<=2?'🟡':'🟢'}</span></td>
+  </tr>`).join('');
+}
+
+function toggleSalidaTipo(){
+  const t=$('sal-tipo').value;
+  $('sal-prod-sec').style.display=t==='venta'?'':'none';
+  $('sal-ins-sec').style.display=t==='insumo'?'':'none';
+}
+function onSalidaProd(){$('sal-warn').style.display='';}
+
+function registrarSalida(){
+  const fecha=$('sal-fecha').value,tipo=$('sal-tipo').value,obs=$('sal-obs').value;
+  if(!fecha){toast('Selecciona fecha.','danger');return;}
+  if(tipo==='venta'){
+    const pn=$('sal-producto').value,cant=parseInt($('sal-cant-prod').value),pv=parseFloat($('sal-precio-venta').value)||0;
+    if(!pn||isNaN(cant)||cant<=0){toast('Completa los campos.','danger');return;}
+    const prod=prods.find(p=>p.nom===pn);
+    if(prod){
+      prod.st=Math.max(0,prod.st-cant);
+      const r=RD[pn];
+      if(r){r.i.forEach(ing=>{const k=Object.keys(stock).find(k=>k.toLowerCase()===ing.n.toLowerCase());if(k)stock[k].s=Math.max(0,stock[k].s-ing.q*cant);});S('p3_stock',stock);}
+      S('p3_prods',prods);
+    }
+    movs.push({id:Date.now(),fecha,tipo:'venta',desc:pn,descripcion:pn,cantidad:cant,total:cant*pv,obs});
+    S('p3_movs',movs);
+    toast(`✅ Venta: ${cant}× ${pn}`);
+    $('sal-cant-prod').value='';$('sal-precio-venta').value='';
+  }else{
+    const ins=$('sal-ins-sel').value,cant=parseFloat($('sal-ins-cant').value);
+    if(!ins||isNaN(cant)||cant<=0){toast('Completa los campos.','danger');return;}
+    if(stock[ins].s<cant){toast('Stock insuficiente.','warn');return;}
+    stock[ins].s-=cant;S('p3_stock',stock);
+    movs.push({id:Date.now(),fecha,tipo:'salida',desc:'Salida: '+ins,descripcion:'Salida: '+ins,cantidad:cant,total:0,obs});
+    S('p3_movs',movs);
+    toast(`✅ Salida: ${fmtN(cant)} de ${ins}`);
+    $('sal-ins-cant').value='';
+  }
+  renderVentasMes();
+}
+
+function renderVentasMes(){
+  const now=new Date();
+  const vm=movs.filter(m=>{const d=new Date(m.fecha+'T12:00:00');return m.tipo==='venta'&&d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();});
+  const tv=vm.reduce((a,b)=>a+(b.total||0),0),uv=vm.reduce((a,b)=>a+b.cantidad,0);
+  const el=$('ventas-mes');if(!el)return;
+  el.innerHTML=`<div style="display:flex;gap:0.5rem;padding:0.2rem 0 0.8rem">
+    <div style="flex:1;background:var(--mint-m);border-radius:var(--r-sm);padding:0.7rem;text-align:center">
+      <div style="font-size:1.1rem;font-weight:800;color:var(--mint-d)">$${fmt(tv)}</div>
+      <div style="font-size:0.65rem;font-weight:700;color:var(--mint-d);opacity:0.8">TOTAL VENTAS</div>
+    </div>
+    <div style="flex:1;background:var(--blue-m);border-radius:var(--r-sm);padding:0.7rem;text-align:center">
+      <div style="font-size:1.1rem;font-weight:800;color:var(--blue-d)">${uv}</div>
+      <div style="font-size:0.65rem;font-weight:700;color:var(--blue-d);opacity:0.8">UNIDADES</div>
+    </div>
+  </div>
+  ${vm.slice(-6).reverse().map(m=>`<div class="list-row">
+    <div class="list-icon li-pink">💰</div>
+    <div class="list-body"><div class="list-name" style="font-size:0.8rem">${m.desc||m.descripcion}</div><div class="list-sub">${fmtD(m.fecha)} · ${m.cantidad} un.</div></div>
+    <div class="list-right"><div class="list-val t-ok" style="font-size:0.82rem">$${fmt(m.total)}</div></div>
+  </div>`).join('')||'<div class="empty" style="padding:1rem"><p>Sin ventas este mes</p></div>'}`;
+}
+
+function renderHistorial(){
+  const desde=$('hist-desde').value,hasta=$('hist-hasta').value,tipo=$('hist-tipo').value;
+  let f=[...movs];
+  if(desde)f=f.filter(m=>m.fecha>=desde);if(hasta)f=f.filter(m=>m.fecha<=hasta);
+  if(tipo)f=f.filter(m=>m.tipo===tipo);f.sort((a,b)=>b.id-a.id);
+  $('hist-tbody').innerHTML=f.length===0
+    ?'<tr><td colspan="5" class="t-soft" style="text-align:center;padding:1.5rem;font-weight:600">Sin movimientos</td></tr>'
+    :f.map(m=>`<tr>
+      <td style="font-size:0.7rem;white-space:nowrap">${fmtD(m.fecha)}</td>
+      <td><span class="badge ${m.tipo==='entrada'?'b-mint':m.tipo==='venta'?'b-pink':'b-warn'}" style="font-size:0.6rem">${cap(m.tipo)}</span></td>
+      <td style="font-size:0.75rem;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.desc||m.descripcion}</td>
+      <td style="font-weight:700">${m.cantidad}</td>
+      <td style="font-weight:800;color:var(--ok)">$${fmt(m.total||0)}</td>
+    </tr>`).join('');
+}
+
+function exportCSV(){
+  const r=[['Fecha','Tipo','Descripcion','Cantidad','Total']];
+  movs.forEach(m=>r.push([m.fecha,m.tipo,m.desc||m.descripcion,m.cantidad,m.total||0]));
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(r.map(x=>x.map(c=>`"${c}"`).join(',')).join('\n'));
+  a.download='movimientos.csv';a.click();
+}
+
+// ══ PRODUCTOS ══
+function renderProdLista(){
+  const now=new Date();
+  const critCount=prods.filter(p=>p.st<=p.min).length;
+  $('dot-productos').classList.toggle('show',critCount>0);
+  const cats=[...new Set(prods.map(p=>p.cat))];
+  $('prod-list-container').innerHTML=cats.map(cat=>{
+    const catProds=prods.filter(p=>p.cat===cat);
+    return `<div class="card mb1">
+      <div style="padding:0.65rem 1rem 0;display:flex;align-items:center;gap:0.5rem">
+        <span style="font-size:1rem">${ICONS[cat]||'🛍️'}</span>
+        <span style="font-size:0.72rem;font-weight:800;color:var(--mid);text-transform:uppercase;letter-spacing:0.06em">${cat}</span>
+        <span class="badge b-lemon" style="margin-left:auto">${catProds.length}</span>
+      </div>
+      ${catProds.map(p=>{
+        const vm=movs.filter(m=>{const d=new Date(m.fecha+'T12:00:00');return m.tipo==='venta'&&(m.desc===p.nom||m.descripcion===p.nom)&&d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).reduce((a,b)=>a+b.cantidad,0);
+        const bCls=p.st<=0?'b-danger':p.st<=p.min?'b-warn':'b-ok';
+        const bLabel=p.st<=0?'🔴':p.st<=p.min?'🟡':'🟢';
+        return `<div class="list-row">
+          <div class="list-body">
+            <div class="list-name">${p.nom}</div>
+            <div class="list-sub">Stock: ${p.st} · Ventas: ${vm} · $${fmt(p.pv)}</div>
+          </div>
+          <div class="list-right" style="display:flex;flex-direction:column;align-items:flex-end;gap:0.3rem">
+            <span class="badge ${bCls}">${bLabel}</span>
+            <div style="display:flex;gap:0.3rem">
+              <button class="btn btn-ghost btn-xs" onclick="editarProd('${p.cod}')">✏️</button>
+              <button class="btn btn-ghost btn-xs" onclick="eliminarProd('${p.cod}')">🗑️</button>
+            </div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
+}
+
+function renderAnalisis(){
+  const now=new Date();
+  const vm=movs.filter(m=>{const d=new Date(m.fecha+'T12:00:00');return m.tipo==='venta'&&d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();});
+  const tv=vm.reduce((a,b)=>a+(b.total||0),0),uv=vm.reduce((a,b)=>a+b.cantidad,0);
+  $('analisis-chips').innerHTML=`
+    <div class="chip"><div class="chip-icon">💰</div><div class="chip-val" style="font-size:1rem">$${fmt(tv)}</div><div class="chip-lbl">Ingresos</div></div>
+    <div class="chip"><div class="chip-icon">📦</div><div class="chip-val" style="font-size:1rem">${uv}</div><div class="chip-lbl">Unidades</div></div>
+    <div class="chip"><div class="chip-icon">🎯</div><div class="chip-val" style="font-size:1rem">$${uv>0?fmt(tv/uv):'0'}</div><div class="chip-lbl">Ticket Prom.</div></div>
+  `;
+  const ag={};vm.forEach(m=>{if(!ag[m.desc||m.descripcion])ag[m.desc||m.descripcion]={u:0,t:0};ag[m.desc||m.descripcion].u+=m.cantidad;ag[m.desc||m.descripcion].t+=m.total;});
+  const sorted=Object.entries(ag).sort((a,b)=>b[1].t-a[1].t);const max=sorted[0]?sorted[0][1].t:1;
+  $('analisis-chart').innerHTML=sorted.length===0
+    ?'<div class="empty"><div class="ei">📊</div><p>Sin ventas</p></div>'
+    :sorted.map(([k,v])=>`<div style="margin-bottom:0.9rem">
+      <div style="display:flex;justify-content:space-between;margin-bottom:0.2rem;font-size:0.8rem">
+        <span style="font-weight:700;color:var(--text)">${k}</span>
+        <span style="color:var(--soft);font-weight:600">${v.u} · <strong class="t-ok">$${fmt(v.t)}</strong></span>
+      </div>
+      <div class="prog"><div class="prog-fill pf-ok" style="width:${Math.round(v.t/max*100)}%"></div></div>
+    </div>`).join('');
+}
+
+function renderStockCritico(){
+  const crits=prods.filter(p=>p.st<=p.min);
+  const insC=Object.entries(stock).filter(([k,v])=>v.s<=0);
+  let html='';
+  if(crits.length){
+    html+=`<div class="card mb1">${crits.map(p=>`<div class="list-row">
+      <div class="list-icon ${p.st<=0?'li-pink':'li-lemon'}">${p.st<=0?'🔴':'🟡'}</div>
+      <div class="list-body"><div class="list-name">${p.nom}</div><div class="list-sub">Stock: ${p.st} / Mín: ${p.min}</div></div>
+      <div class="list-right"><span class="badge ${p.st<=0?'b-danger':'b-warn'}">${p.st<=0?'Agotado':'Bajo mín.'}</span></div>
+    </div>`).join('')}</div>`;
+  }else{html+='<div class="al al-ok mb1">✅ Todos los productos sobre el mínimo</div>';}
+  html+=`<div style="font-size:0.72rem;font-weight:800;color:var(--mid);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.5rem">Insumos Agotados</div>`;
+  if(insC.length){
+    html+=`<div class="card">${insC.slice(0,12).map(([k,v])=>`<div class="list-row">
+      <div class="list-icon li-pink">🔴</div>
+      <div class="list-body"><div class="list-name">${k}</div><div class="list-sub">${v.cat}</div></div>
+      <div class="list-right"><span class="badge b-danger">Agotado</span></div>
+    </div>`).join('')}</div>`;
+  }else{html+='<div class="al al-ok">✅ Sin insumos agotados</div>';}
+  $('stock-critico-body').innerHTML=html;
+}
+
+function openModalProd(){
+  $('pe-cod-edit').value='';
+  ['pe-cod','pe-nom','pe-precio','pe-stock','pe-min'].forEach(id=>$(id).value='');
+  $('pe-receta').innerHTML='<option value="">Sin receta</option>'+Object.keys(RD).map(r=>`<option value="${r}">${r}</option>`).join('');
+  $('modal-prod-title').textContent='Nuevo Producto';
+  openModal('modal-prod');
+}
+
+function editarProd(cod){
+  const p=prods.find(x=>x.cod===cod);if(!p)return;
+  $('pe-cod-edit').value=cod;$('pe-cod').value=p.cod;$('pe-nom').value=p.nom;
+  $('pe-cat').value=p.cat;$('pe-precio').value=p.pv;$('pe-stock').value=p.st;$('pe-min').value=p.min;
+  $('pe-receta').innerHTML='<option value="">Sin receta</option>'+Object.keys(RD).map(r=>`<option value="${r}" ${r===p.rec?'selected':''}>${r}</option>`).join('');
+  $('modal-prod-title').textContent='Editar Producto';
+  openModal('modal-prod');
+}
+
+function guardarProd(){
+  const ec=$('pe-cod-edit').value;
+  const p={cod:$('pe-cod').value.trim(),nom:$('pe-nom').value.trim(),cat:$('pe-cat').value,pv:parseFloat($('pe-precio').value)||0,st:parseInt($('pe-stock').value)||0,min:parseInt($('pe-min').value)||5,rec:$('pe-receta').value};
+  if(!p.nom||!p.cod){toast('Nombre y código requeridos.','danger');return;}
+  if(ec){const i=prods.findIndex(x=>x.cod===ec);if(i!==-1)prods[i]=p;}else prods.push(p);
+  S('p3_prods',prods);closeModal('modal-prod');renderProdLista();toast('✅ Producto guardado.');
+}
+
+function eliminarProd(cod){
+  if(!confirm('¿Eliminar este producto?'))return;
+  prods=prods.filter(p=>p.cod!==cod);S('p3_prods',prods);renderProdLista();toast('Eliminado.','warn');
+}
+
+// ══ CALCULADORA ══
+function initCalc(){
+  $('calc-prod').innerHTML=Object.keys(RD).map(r=>`<option value="${r}">${r}</option>`).join('');
+  calcularProd();
+}
+
+function calcularProd(){
+  const pn=$('calc-prod').value,cant=parseFloat($('calc-cant').value)||1,r=RD[pn];
+  $('calc-info').innerHTML=`📋 Receta para 1 unidad de <strong>${pn}</strong>`;
+  if(!r){$('calc-res').innerHTML='<h3>🧾 Sin receta</h3>';return;}
+  const ti=r.i.map(i=>({...i,ct:i.q*cant}));
+  const sc=ti.map(i=>{const k=Object.keys(stock).find(k=>k.toLowerCase()===i.n.toLowerCase());const d=k?stock[k].s:null;return{...i,d,ok:d!==null?d>=i.ct:null};});
+  $('calc-res').innerHTML=`<h3>🧾 Para ${cant} unidad${cant>1?'es':''} de ${pn}</h3>${ti.map(i=>`<div class="cr-row"><span>${cap(i.n)}</span><span>${fmtN(i.ct)} ${i.u}</span></div>`).join('')}`;
+  $('calc-check').style.display='';
+  const hay=sc.some(i=>i.ok===false);
+  $('calc-check-body').innerHTML=(hay?'<div class="al al-warn mb1">⚠️ Algunos ingredientes son insuficientes</div>':'')+
+    sc.map(i=>`<div class="list-row" style="padding:0.55rem 0">
+      <div class="list-body"><div class="list-name" style="font-size:0.8rem">${cap(i.n)}</div><div class="list-sub">${fmtN(i.ct)} ${i.u} necesarios · ${i.d!==null?fmtN(i.d)+' disp.':'—'}</div></div>
+      <div class="list-right"><span class="badge ${i.ok===true?'b-ok':i.ok===false?'b-danger':'b-warn'}">${i.ok===true?'✅':'❌'}</span></div>
+    </div>`).join('');
+}
+
+function ejecutarProd(){
+  const pn=$('calc-prod').value,cant=parseFloat($('calc-cant').value)||1,desc=$('calc-desc').value;
+  if(desc==='si'){
+    const r=RD[pn];if(!r){toast('Sin receta.','danger');return;}
+    let ins=false;r.i.forEach(i=>{const k=Object.keys(stock).find(k=>k.toLowerCase()===i.n.toLowerCase());if(k&&stock[k].s<i.q*cant)ins=true;});
+    if(ins&&!confirm('⚠️ Stock insuficiente en algunos ingredientes. ¿Continuar?'))return;
+    r.i.forEach(i=>{const k=Object.keys(stock).find(k=>k.toLowerCase()===i.n.toLowerCase());if(k)stock[k].s=Math.max(0,stock[k].s-i.q*cant);});
+    S('p3_stock',stock);
+    const p=prods.find(p=>p.nom===pn||p.rec===pn);if(p){p.st+=cant;S('p3_prods',prods);}
+    movs.push({id:Date.now(),fecha:today(),tipo:'produccion',desc:`Prod: ${cant}× ${pn}`,descripcion:`Prod: ${cant}× ${pn}`,cantidad:cant,total:0});
+    S('p3_movs',movs);toast(`✅ Producción: ${cant}× ${pn}`);
+  }else toast('Cálculo listo. No se descontó stock.','warn');
+  calcularProd();
+}
+
+// ══ RECETAS ══
+function filterRec(f,btn){
+  recFilt=f;
+  document.querySelectorAll('#sc-recetas .pill').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');renderRecetas();
+}
+
+const FMAP={brownie:['brownie'],cheescake:['cheescake'],galleta:['galleta'],rollito:['rollito'],base:['reduccion','pastelera','frosting']};
+const REC_COLORS={pink:'#FFD1DC',blue:'#A2CFFE',mint:'#AAF0D1',lav:'#E3E4FA',lemon:'#FFFACD',peach:'#FFDAB9',lilac:'#DCD0FF',powder:'#B0E0E6'};
+const REC_COLORS_D={pink:'#c4607a',blue:'#3a78b5',mint:'#1f9060',lav:'#5254b0',lemon:'#8a7a10',peach:'#b06020',lilac:'#6040c0',powder:'#207888'};
+
+function renderRecetas(){
+  const q=($('rec-search')?.value||'').toLowerCase();
+  const entries=Object.entries(RD).filter(([n])=>{
+    if(q&&!n.toLowerCase().includes(q))return false;
+    if(recFilt==='todas')return true;
+    return(FMAP[recFilt]||[]).some(k=>n.toLowerCase().includes(k));
+  });
+  $('recetas-list').innerHTML=entries.length===0
+    ?'<div class="empty"><div class="ei">🔍</div><p>No hay recetas</p></div>'
+    :entries.map(([nom,d])=>{
+      const bg=REC_COLORS[d.col]||'#E3E4FA',dc=REC_COLORS_D[d.col]||'#5254b0';
+      return `<div class="rec-card">
+        <div class="rec-head" style="background:${bg}">
+          <div><div class="rec-name">${nom}</div><div class="rec-code" style="color:${dc}">Cód: ${d.c} · ${d.i.length} ingredientes</div></div>
+          <button class="btn-ghost" onclick="usarEnCalc('${nom}')" style="font-size:1.3rem;cursor:pointer;background:rgba(255,255,255,0.6);border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:none">🧮</button>
+        </div>
+        <div class="rec-body">
+          ${d.i.map(i=>`<div class="ing-row"><span class="ing-n">${cap(i.n)}</span><span class="ing-v">${fmtN(i.q)} ${i.u}</span></div>`).join('')}
+        </div>
+      </div>`;
+    }).join('');
+}
+
+function usarEnCalc(nom){
+  switchScreen('calculadora',$('nb-calculadora'));
+  setTimeout(()=>{$('calc-prod').value=nom;calcularProd();},80);
+}
+
+// ══ MODAL ══
+function openModal(id){$(id).classList.add('open');}
+function closeModal(id){$(id).classList.remove('open');}
+document.querySelectorAll('.overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
+
+// ══ INIT ══
+document.addEventListener('DOMContentLoaded',()=>{
+  const now=new Date();
+  const hd=$('hist-desde'),hh=$('hist-hasta');
+  if(hd)hd.value=new Date(now.getFullYear(),now.getMonth(),1).toISOString().split('T')[0];
+  if(hh)hh.value=today();
+  renderDash();
+});
+</script>
+</body>
+</html>
