@@ -10,117 +10,149 @@
 <meta name="theme-color" content="#d4c8f8">
 <title>Pastelería Producción Brutal</title>
 <script>
-// Genera el ícono como SVG → PNG en canvas y lo inyecta como link
 (function(){
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-    <defs>
-      <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f0c8d8"/><stop offset="50%" stop-color="#d4c8f8"/><stop offset="100%" stop-color="#a8d8f8"/></linearGradient>
-      <linearGradient id="l1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffc8d8"/><stop offset="100%" stop-color="#ffb0c8"/></linearGradient>
-      <linearGradient id="l2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffe8f0"/><stop offset="100%" stop-color="#ffd8e8"/></linearGradient>
-      <linearGradient id="l3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#dcd0ff"/><stop offset="100%" stop-color="#c8b8f8"/></linearGradient>
-      <linearGradient id="fr" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#f0ecff"/></linearGradient>
-      <linearGradient id="c1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#aaf0d1"/><stop offset="100%" stop-color="#80d8b0"/></linearGradient>
-      <linearGradient id="c2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffdab9"/><stop offset="100%" stop-color="#f8c090"/></linearGradient>
-      <linearGradient id="c3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#a2cffe"/><stop offset="100%" stop-color="#80b8f0"/></linearGradient>
-    </defs>
-    <!-- Fondo redondeado -->
-    <rect width="512" height="512" rx="112" fill="url(#bg)"/>
-    <!-- Sombra torta -->
-    <ellipse cx="256" cy="418" rx="148" ry="16" fill="#c0a0c8" opacity="0.28"/>
-    <!-- Plato -->
-    <ellipse cx="256" cy="412" rx="158" ry="15" fill="#fff0f5" stroke="#e8c8d8" stroke-width="2"/>
-    <!-- Capa base -->
-    <rect x="102" y="338" width="308" height="74" rx="14" fill="url(#l1)" stroke="#e890b0" stroke-width="2"/>
-    <line x1="155" y1="342" x2="155" y2="408" stroke="#ffd8e8" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
-    <line x1="210" y1="342" x2="210" y2="408" stroke="#ffd8e8" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
-    <line x1="302" y1="342" x2="302" y2="408" stroke="#ffd8e8" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
-    <line x1="357" y1="342" x2="357" y2="408" stroke="#ffd8e8" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
-    <!-- Crema base-media -->
-    <rect x="96" y="332" width="320" height="14" rx="7" fill="url(#fr)" stroke="#e8d8f0" stroke-width="1.5" opacity="0.95"/>
-    <!-- Capa media -->
-    <rect x="128" y="252" width="256" height="82" rx="12" fill="url(#l2)" stroke="#f0b0c8" stroke-width="2"/>
-    <circle cx="182" cy="293" r="8" fill="#ffc8d8" stroke="#f090b0" stroke-width="1.5"/>
-    <circle cx="224" cy="275" r="6" fill="#ffc8d8" stroke="#f090b0" stroke-width="1.5"/>
-    <circle cx="256" cy="300" r="9" fill="#ffc8d8" stroke="#f090b0" stroke-width="1.5"/>
-    <circle cx="288" cy="272" r="6" fill="#ffc8d8" stroke="#f090b0" stroke-width="1.5"/>
-    <circle cx="330" cy="293" r="8" fill="#ffc8d8" stroke="#f090b0" stroke-width="1.5"/>
-    <!-- Crema media-top -->
-    <rect x="122" y="246" width="268" height="14" rx="7" fill="url(#fr)" stroke="#e8d8f0" stroke-width="1.5" opacity="0.95"/>
-    <!-- Capa top -->
-    <rect x="162" y="178" width="188" height="72" rx="12" fill="url(#l3)" stroke="#a890e8" stroke-width="2"/>
-    <path d="M178 205 Q198 194 218 205 Q238 216 258 205 Q278 194 298 205 Q318 216 334 205" fill="none" stroke="#c0a8f8" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
-    <path d="M178 222 Q198 211 218 222 Q238 233 258 222 Q278 211 298 222 Q318 233 334 222" fill="none" stroke="#c0a8f8" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
-    <!-- Crema encima del top -->
-    <rect x="158" y="172" width="196" height="14" rx="7" fill="url(#fr)" stroke="#e8d8f0" stroke-width="1.5" opacity="0.95"/>
-    <!-- Vela 1 -->
-    <rect x="196" y="128" width="16" height="48" rx="5" fill="url(#c1)" stroke="#60c898" stroke-width="1.5"/>
-    <ellipse cx="204" cy="122" rx="7" ry="10" fill="#ffe860" opacity="0.95"/>
-    <ellipse cx="204" cy="118" rx="4" ry="6" fill="#ff9820" opacity="0.9"/>
-    <ellipse cx="204" cy="115" rx="2" ry="3" fill="#fff0a0" opacity="0.8"/>
-    <!-- Vela 2 -->
-    <rect x="248" y="112" width="16" height="64" rx="5" fill="url(#c2)" stroke="#e09060" stroke-width="1.5"/>
-    <ellipse cx="256" cy="106" rx="7" ry="10" fill="#ffe860" opacity="0.95"/>
-    <ellipse cx="256" cy="102" rx="4" ry="6" fill="#ff9820" opacity="0.9"/>
-    <ellipse cx="256" cy="99" rx="2" ry="3" fill="#fff0a0" opacity="0.8"/>
-    <!-- Vela 3 -->
-    <rect x="300" y="130" width="16" height="46" rx="5" fill="url(#c3)" stroke="#6098d8" stroke-width="1.5"/>
-    <ellipse cx="308" cy="124" rx="7" ry="10" fill="#ffe860" opacity="0.95"/>
-    <ellipse cx="308" cy="120" rx="4" ry="6" fill="#ff9820" opacity="0.9"/>
-    <ellipse cx="308" cy="117" rx="2" ry="3" fill="#fff0a0" opacity="0.8"/>
-    <!-- Texto PB -->
-    <text x="256" y="478" font-family="system-ui,sans-serif" font-weight="800" font-size="38" fill="#6040b8" text-anchor="middle" letter-spacing="2">PB</text>
-  </svg>`;
+  // Dibuja el ícono 100% en Canvas — sin SVG — fondo rosa garantizado
+  function dibujarIcono(size) {
+    const c = document.createElement('canvas');
+    c.width = size; c.height = size;
+    const x = c.getContext('2d');
+    const s = size / 512; // factor de escala
 
-  const blob = new Blob([svg], {type:'image/svg+xml'});
-  const url  = URL.createObjectURL(blob);
+    function sc(v){ return v * s; }
 
-  // Favicon SVG
-  const lnkSvg = document.createElement('link');
-  lnkSvg.rel  = 'icon'; lnkSvg.type = 'image/svg+xml'; lnkSvg.href = url;
-  document.head.appendChild(lnkSvg);
+    // ── FONDO rosa-lavanda — fillRect cubre todo el canvas (Android no recorta esquinas) ──
+    const bg = x.createLinearGradient(0, 0, size, size);
+    bg.addColorStop(0,   '#f0b8cc');
+    bg.addColorStop(0.5, '#d4b8f8');
+    bg.addColorStop(1,   '#98c8f8');
+    x.fillStyle = bg;
+    x.fillRect(0, 0, size, size);
 
-  // Apple touch icon — necesita PNG, lo convertimos con canvas
-  const img = new Image();
-  img.onload = function(){
-    const canvas = document.createElement('canvas');
-    canvas.width = 512; canvas.height = 512;
-    canvas.getContext('2d').drawImage(img, 0, 0, 512, 512);
-    const png = canvas.toDataURL('image/png');
+    // ── PLATO ──
+    x.beginPath();
+    x.ellipse(sc(256), sc(418), sc(160), sc(18), 0, 0, Math.PI*2);
+    x.fillStyle = '#ffe0ec'; x.fill();
+    x.strokeStyle = '#e8b0c8'; x.lineWidth = sc(2); x.stroke();
 
-    const lnkApple = document.createElement('link');
-    lnkApple.rel   = 'apple-touch-icon';
-    lnkApple.sizes = '512x512';
-    lnkApple.href  = png;
-    document.head.appendChild(lnkApple);
+    // helper: rectángulo redondeado compatible con Android
+    function rRect(lx,ly,lw,lh,lr,fill,stroke,lw2){
+      x.beginPath();
+      const rx=sc(lx),ry=sc(ly),rw=sc(lw),rh=sc(lh),rr=sc(lr);
+      x.moveTo(rx+rr,ry); x.lineTo(rx+rw-rr,ry);
+      x.arcTo(rx+rw,ry,rx+rw,ry+rr,rr); x.lineTo(rx+rw,ry+rh-rr);
+      x.arcTo(rx+rw,ry+rh,rx+rw-rr,ry+rh,rr); x.lineTo(rx+rr,ry+rh);
+      x.arcTo(rx,ry+rh,rx,ry+rh-rr,rr); x.lineTo(rx,ry+rr);
+      x.arcTo(rx,ry,rx+rr,ry,rr); x.closePath();
+      x.fillStyle=fill; x.fill();
+      if(stroke){x.strokeStyle=stroke;x.lineWidth=sc(lw2||2);x.stroke();}
+    }
 
-    const lnkApple2 = document.createElement('link');
-    lnkApple2.rel   = 'apple-touch-icon';
-    lnkApple2.sizes = '180x180';
-    lnkApple2.href  = png;
-    document.head.appendChild(lnkApple2);
+    // ── CAPA BASE (rosa) ──
+    rRect(100,338,312,76,14,'#ffb8cc','#e880a8');
+    // rayas
+    x.strokeStyle='#ffe0ec'; x.lineWidth=sc(3);
+    [[155],[210],[302],[360]].forEach(([lx])=>{
+      x.beginPath(); x.moveTo(sc(lx),sc(342)); x.lineTo(sc(lx),sc(410)); x.stroke();
+    });
 
-    // manifest dinámico
+    // ── CREMA base→media ──
+    rRect(94,330,324,16,8,'#fff4fa','#f0d8ee',1.5);
+
+    // ── CAPA MEDIA (rosa claro) ──
+    rRect(126,250,260,82,12,'#ffe4f0','#f0a8c0');
+    // bolitas
+    x.lineWidth=sc(1.5);
+    [[182,293,8],[224,275,6],[256,300,9],[288,272,6],[330,293,8]].forEach(([lx,ly,lr])=>{
+      x.beginPath(); x.arc(sc(lx),sc(ly),sc(lr),0,Math.PI*2);
+      x.fillStyle='#ffb8cc'; x.fill();
+      x.strokeStyle='#f080a0'; x.stroke();
+    });
+
+    // ── CREMA media→top ──
+    rRect(120,244,272,16,8,'#fff4fa','#f0d8ee',1.5);
+
+    // ── CAPA TOP (lavanda) ──
+    rRect(160,176,192,74,12,'#dcd0ff','#a890e8');
+    // ondas
+    x.strokeStyle='#b8a0f8'; x.lineWidth=sc(2.5); x.lineCap='round';
+    [200,220].forEach(ly=>{
+      x.beginPath();
+      x.moveTo(sc(178),sc(ly));
+      x.quadraticCurveTo(sc(208),sc(ly-12),sc(238),sc(ly));
+      x.quadraticCurveTo(sc(268),sc(ly+12),sc(298),sc(ly));
+      x.quadraticCurveTo(sc(318),sc(ly-10),sc(334),sc(ly));
+      x.stroke();
+    });
+
+    // ── CREMA encima del top ──
+    rRect(156,170,200,16,8,'#fff4fa','#e8d8f0',1.5);
+
+    // ── VELAS ──
+    const velas = [
+      {x:196,y:124,h:50,fill:'#a0f0c8',stroke:'#50c888'},
+      {x:248,y:108,h:66,fill:'#ffd0a0',stroke:'#e09060'},
+      {x:300,y:126,h:48,fill:'#90c8ff',stroke:'#5898d8'},
+    ];
+    velas.forEach(v=>{
+      rRect(v.x,v.y,16,v.h,5,v.fill,v.stroke,1.5);
+      // llama
+      const cx=sc(v.x+8), cy=sc(v.y);
+      x.beginPath(); x.ellipse(cx,cy,sc(7),sc(10),0,0,Math.PI*2);
+      x.fillStyle='#ffe840'; x.fill();
+      x.beginPath(); x.ellipse(cx,cy-sc(4),sc(4),sc(6),0,0,Math.PI*2);
+      x.fillStyle='#ff9820'; x.fill();
+      x.beginPath(); x.ellipse(cx,cy-sc(7),sc(2),sc(3),0,0,Math.PI*2);
+      x.fillStyle='#fff8a0'; x.fill();
+    });
+
+    // ── TEXTO "PB" ──
+    x.font = `800 ${sc(58)}px system-ui,sans-serif`;
+    x.textAlign = 'center';
+    x.textBaseline = 'bottom';
+    x.fillStyle = '#5030b0';
+    x.fillText('PB', sc(256), sc(492));
+
+    return c.toDataURL('image/png');
+  }
+
+  // Esperar a que el DOM esté listo
+  function inyectar(){
+    const png = dibujarIcono(512);
+
+    // Favicon del navegador
+    const lf = document.createElement('link');
+    lf.rel='icon'; lf.type='image/png'; lf.href=png;
+    document.head.appendChild(lf);
+
+    // Apple touch icon (iOS/iPadOS)
+    const la = document.createElement('link');
+    la.rel='apple-touch-icon'; la.href=png;
+    document.head.appendChild(la);
+
+    // Manifest — PNG en base64 embebido, funciona en Android Chrome desde archivo local
     const manifest = {
-      name: 'Pastelería Producción Brutal',
-      short_name: 'Pastelería PB',
-      start_url: './',
-      display: 'standalone',
-      background_color: '#d4c8f8',
-      theme_color: '#d4c8f8',
-      icons: [
-        {src: png, sizes: '512x512', type: 'image/png'},
-        {src: png, sizes: '180x180', type: 'image/png'}
+      name:'Pastelería Producción Brutal',
+      short_name:'Pastelería PB',
+      start_url:'.',
+      display:'standalone',
+      background_color:'#f0b8cc',
+      theme_color:'#d4b8f8',
+      icons:[
+        {src:png, sizes:'512x512', type:'image/png', purpose:'any maskable'},
+        {src:png, sizes:'192x192', type:'image/png', purpose:'any maskable'}
       ]
     };
-    const mBlob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
-    const lnkM  = document.createElement('link');
-    lnkM.rel    = 'manifest';
-    lnkM.href   = URL.createObjectURL(mBlob);
-    document.head.appendChild(lnkM);
+    const mb = new Blob([JSON.stringify(manifest)],{type:'application/manifest+json'});
+    const lm = document.createElement('link');
+    lm.rel='manifest'; lm.href=URL.createObjectURL(mb);
+    document.head.appendChild(lm);
+  }
 
-    URL.revokeObjectURL(url);
-  };
-  img.src = url;
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded', inyectar);
+  } else {
+    inyectar();
+  }
 })();
 </script>
 <style>
@@ -620,6 +652,7 @@ tr:nth-child(even) td{background:rgba(220,208,255,0.12);}
   <div class="pill-tabs">
     <button class="pill active" onclick="switchSubTab('mov','entradas',this)">⬇️ Entrada</button>
     <button class="pill" onclick="switchSubTab('mov','salidas',this)">⬆️ Venta</button>
+    <button class="pill" onclick="switchSubTab('mov','mermas',this)">🗑️ Mermas</button>
     <button class="pill" onclick="switchSubTab('mov','historial',this)">📋 Historial</button>
   </div>
 
@@ -690,6 +723,41 @@ tr:nth-child(even) td{background:rgba(220,208,255,0.12);}
     </div>
   </div>
 
+  <!-- Mermas -->
+  <div id="mov-mermas" style="display:none">
+    <div class="ph-pad">
+      <div class="form-card fc-blue">
+        <div class="form-card-head h-blue"><span class="form-card-icon">🗑️</span><span class="form-card-title">Registrar Merma / Pérdida</span></div>
+        <div class="form-card-body">
+          <div class="fg"><label>Fecha</label><input type="date" id="mer-fecha"></div>
+          <div class="fg"><label>Insumo / Materia Prima</label><select id="mer-insumo"></select></div>
+          <div class="row2">
+            <div class="fg" style="margin:0"><label>Cantidad perdida</label><input type="number" id="mer-cantidad" placeholder="0" min="0" step="0.01"></div>
+            <div class="fg" style="margin:0"><label>Unidad</label><input type="text" id="mer-unidad" readonly></div>
+          </div>
+          <div class="mt1"></div>
+          <div class="fg"><label>Motivo de la merma</label>
+            <select id="mer-motivo">
+              <option value="vencimiento">📅 Vencimiento / Caducidad</option>
+              <option value="derrame">💧 Derrame / Accidente</option>
+              <option value="coccion">🔥 Error en cocción</option>
+              <option value="calidad">⚠️ Problema de calidad</option>
+              <option value="rotura">💥 Rotura / Daño</option>
+              <option value="otro">📝 Otro</option>
+            </select>
+          </div>
+          <div class="fg"><label>Observación</label><input type="text" id="mer-obs" placeholder="Detalle adicional..."></div>
+          <div class="al al-warn" style="margin-bottom:0.8rem">⚠️ La merma descontará la cantidad del stock del insumo.</div>
+          <button class="btn btn-blue btn-full" onclick="registrarMerma()">🗑️ Registrar Merma</button>
+        </div>
+      </div>
+      <div class="card"><div class="card-pad">
+        <div class="card-title">📊 Mermas del Mes</div>
+        <div id="mermas-mes"></div>
+      </div></div>
+    </div>
+  </div>
+
   <!-- Historial -->
   <div id="mov-historial" style="display:none">
     <div class="ph-pad">
@@ -700,7 +768,7 @@ tr:nth-child(even) td{background:rgba(220,208,255,0.12);}
           <div class="fg" style="margin:0"><label>Hasta</label><input type="date" id="hist-hasta"></div>
         </div>
         <div style="display:flex;gap:0.5rem;margin-bottom:0.8rem;">
-          <select id="hist-tipo" style="flex:1"><option value="">Todos</option><option value="entrada">Entradas</option><option value="venta">Ventas</option><option value="salida">Salidas</option></select>
+          <select id="hist-tipo" style="flex:1"><option value="">Todos</option><option value="entrada">Entradas</option><option value="venta">Ventas</option><option value="salida">Salidas</option><option value="merma">Mermas</option></select>
           <button class="btn btn-lilac btn-sm" onclick="renderHistorial()">Filtrar</button>
           <button class="btn btn-outline btn-sm" onclick="exportCSV()">CSV</button>
         </div>
@@ -713,14 +781,14 @@ tr:nth-child(even) td{background:rgba(220,208,255,0.12);}
   </div>
 </div>
 
-<!-- ═══ PRODUCTOS ═══ -->
+<!-- ═══ MATERIAS PRIMAS ═══ -->
 <div id="sc-productos" class="screen">
   <div class="ph">
-    <div class="ph-title">Productos</div>
-    <button class="btn btn-primary btn-sm" onclick="openModalProd()">+ Nuevo</button>
+    <div class="ph-title">Materias Primas</div>
+    <button class="btn btn-primary btn-sm" onclick="openModalMP()">+ Nueva MP</button>
   </div>
   <div class="pill-tabs">
-    <button class="pill active" onclick="switchSubTab('prod','lista',this)">📋 Lista</button>
+    <button class="pill active" onclick="switchSubTab('prod','lista',this)">📋 Inventario</button>
     <button class="pill" onclick="switchSubTab('prod','analisis',this)">📈 Análisis</button>
     <button class="pill" onclick="switchSubTab('prod','stock-critico',this)">⚠️ Crítico</button>
   </div>
@@ -776,7 +844,10 @@ tr:nth-child(even) td{background:rgba(220,208,255,0.12);}
 
 <!-- ═══ RECETAS ═══ -->
 <div id="sc-recetas" class="screen">
-  <div class="ph"><div class="ph-title">Recetas</div></div>
+  <div class="ph">
+    <div class="ph-title">Recetas</div>
+    <button class="btn btn-primary btn-sm" onclick="openModalReceta()">+ Nueva</button>
+  </div>
   <div class="ph-pad" style="padding-bottom:0.3rem">
     <input type="text" id="rec-search" placeholder="🔍 Buscar receta..." oninput="renderRecetas()">
   </div>
@@ -806,8 +877,8 @@ tr:nth-child(even) td{background:rgba(220,208,255,0.12);}
   </button>
   <button class="nb" id="nb-productos" onclick="switchScreen('productos',this)">
     <div class="nb-dot" id="dot-productos"></div>
-    <div class="nb-bg"><span class="nb-icon">🛍️</span></div>
-    <span class="nb-lbl">Productos</span>
+    <div class="nb-bg"><span class="nb-icon">🧂</span></div>
+    <span class="nb-lbl">Insumos</span>
   </button>
   <button class="nb" id="nb-calculadora" onclick="switchScreen('calculadora',this)">
     <div class="nb-bg"><span class="nb-icon">🧮</span></div>
@@ -819,34 +890,86 @@ tr:nth-child(even) td{background:rgba(220,208,255,0.12);}
   </button>
 </nav>
 
-<!-- MODAL PRODUCTO -->
-<div class="overlay" id="modal-prod">
+<!-- MODAL: MATERIA PRIMA -->
+<div class="overlay" id="modal-mp">
   <div class="sheet">
     <div class="sheet-handle"></div>
     <div class="sheet-head">
-      <div class="sheet-title" id="modal-prod-title">Nuevo Producto</div>
-      <button class="sheet-close" onclick="closeModal('modal-prod')">✕</button>
+      <div class="sheet-title" id="modal-mp-title">Nueva Materia Prima</div>
+      <button class="sheet-close" onclick="closeModal('modal-mp')">✕</button>
     </div>
     <div class="sheet-body">
-      <input type="hidden" id="pe-cod-edit">
+      <input type="hidden" id="mp-edit-key">
+      <div class="fg"><label>Nombre del Insumo</label><input type="text" id="mp-nom" placeholder="Ej: HARINA DE TRIGO"></div>
       <div class="row2">
-        <div class="fg" style="margin:0 0 0.85rem"><label>Código</label><input type="text" id="pe-cod" placeholder="3025"></div>
+        <div class="fg" style="margin:0 0 0.85rem"><label>Unidad de medida</label>
+          <select id="mp-unidad">
+            <option>KG</option><option>LITRO</option><option>GR</option><option>UN</option>
+            <option>500 GRS</option><option>250 GRS</option><option>4 KG</option><option>25 KG</option>
+          </select>
+        </div>
         <div class="fg" style="margin:0 0 0.85rem"><label>Categoría</label>
-          <select id="pe-cat"><option>Brownies</option><option>Cheescakes</option><option>Galletas</option><option>Rollitos</option><option>Bases</option><option>Frostings</option><option>Otros</option></select>
+          <select id="mp-cat">
+            <option>Harinas</option><option>Lacteos</option><option>Azúcares</option>
+            <option>Chocolates</option><option>Huevos</option><option>Pulpas</option>
+            <option>Leudantes</option><option>Esencias</option><option>Especias</option>
+            <option>Confites</option><option>Frutos secos</option><option>Verduras</option>
+            <option>Espesantes</option><option>Líquidos</option><option>Condimentos</option><option>Otros</option>
+          </select>
         </div>
       </div>
-      <div class="fg"><label>Nombre del Producto</label><input type="text" id="pe-nom" placeholder="Nombre..."></div>
       <div class="row2">
-        <div class="fg" style="margin:0 0 0.85rem"><label>Precio Venta (CLP)</label><input type="number" id="pe-precio" placeholder="0"></div>
-        <div class="fg" style="margin:0 0 0.85rem"><label>Stock actual (un.)</label><input type="number" id="pe-stock" placeholder="0"></div>
+        <div class="fg" style="margin:0 0 0.85rem"><label>Precio unitario (CLP)</label><input type="number" id="mp-precio" placeholder="0" min="0"></div>
+        <div class="fg" style="margin:0 0 0.85rem"><label>Stock actual</label><input type="number" id="mp-stock" placeholder="0" min="0" step="0.01"></div>
       </div>
+      <div class="fg"><label>Stock mínimo (alerta)</label><input type="number" id="mp-min" placeholder="2" min="0" step="0.01"></div>
+      <div class="flex-end mt1">
+        <button class="btn btn-outline" onclick="closeModal('modal-mp')">Cancelar</button>
+        <button class="btn btn-primary" onclick="guardarMP()">💾 Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: RECETA -->
+<div class="overlay" id="modal-receta">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-head">
+      <div class="sheet-title" id="modal-receta-title">Nueva Receta</div>
+      <button class="sheet-close" onclick="closeModal('modal-receta')">✕</button>
+    </div>
+    <div class="sheet-body">
+      <input type="hidden" id="rec-edit-key">
       <div class="row2">
-        <div class="fg" style="margin:0 0 0.85rem"><label>Stock mínimo</label><input type="number" id="pe-min" placeholder="5"></div>
-        <div class="fg" style="margin:0 0 0.85rem"><label>Receta</label><select id="pe-receta"></select></div>
+        <div class="fg" style="margin:0 0 0.85rem"><label>Nombre de la Receta</label><input type="text" id="rec-nom" placeholder="Ej: Brownie Oreo"></div>
+        <div class="fg" style="margin:0 0 0.85rem"><label>Código</label><input type="number" id="rec-cod" placeholder="3030"></div>
+      </div>
+      <div class="fg">
+        <label>Color de tarjeta</label>
+        <select id="rec-col">
+          <option value="pink">🌸 Rosa</option><option value="blue">💙 Azul</option>
+          <option value="mint">🌿 Menta</option><option value="lav">💜 Lavanda</option>
+          <option value="lemon">🍋 Limón</option><option value="peach">🍑 Durazno</option>
+          <option value="lilac">🪻 Lila</option><option value="powder">🩵 Celeste</option>
+        </select>
+      </div>
+      <div class="card-title" style="margin-top:0.5rem">Ingredientes</div>
+      <div id="rec-ings-list" style="margin-bottom:0.7rem"></div>
+      <div style="background:var(--lav-s);border-radius:var(--r-sm);padding:0.8rem;border:1.5px solid var(--lilac)">
+        <div style="font-size:0.72rem;font-weight:800;color:var(--lilac-d);margin-bottom:0.5rem">➕ AGREGAR INGREDIENTE</div>
+        <div class="row2" style="margin-bottom:0.5rem">
+          <div class="fg" style="margin:0"><label>Ingrediente</label><input type="text" id="ri-nom" placeholder="Nombre..."></div>
+          <div class="fg" style="margin:0"><label>Unidad</label>
+            <select id="ri-unidad"><option>g</option><option>kg</option><option>ml</option><option>l</option><option>un</option></select>
+          </div>
+        </div>
+        <div class="fg"><label>Cantidad</label><input type="number" id="ri-cant" placeholder="0" min="0" step="0.001"></div>
+        <button class="btn btn-lilac btn-full btn-sm" onclick="agregarIngrediente()">➕ Agregar</button>
       </div>
       <div class="flex-end mt1">
-        <button class="btn btn-outline" onclick="closeModal('modal-prod')">Cancelar</button>
-        <button class="btn btn-primary" onclick="guardarProd()">💾 Guardar</button>
+        <button class="btn btn-outline" onclick="closeModal('modal-receta')">Cancelar</button>
+        <button class="btn btn-primary" onclick="guardarReceta()">💾 Guardar Receta</button>
       </div>
     </div>
   </div>
@@ -970,21 +1093,22 @@ function switchSubTab(grp,name,btn){
   ctx.querySelectorAll('.pill').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   if(grp==='mov'){
-    ['entradas','salidas','historial'].forEach(id=>$('mov-'+id).style.display=id===name?'':'none');
+    ['entradas','salidas','mermas','historial'].forEach(id=>$('mov-'+id).style.display=id===name?'':'none');
     if(name==='salidas')renderVentasMes();
+    if(name==='mermas')renderMermasMes();
     if(name==='historial')renderHistorial();
   }else{
     ['lista','analisis','stock-critico'].forEach(id=>$('prod-'+id).style.display=id===name?'':'none');
     if(name==='analisis')renderAnalisis();
     if(name==='stock-critico')renderStockCritico();
-    if(name==='lista')renderProdLista();
+    if(name==='lista')renderMPLista();
   }
 }
 
 function renderScreen(name){
   if(name==='dashboard')renderDash();
   if(name==='movimientos'){initMovForm();renderStockTable();}
-  if(name==='productos')renderProdLista();
+  if(name==='productos')renderMPLista();
   if(name==='calculadora')initCalc();
   if(name==='recetas')renderRecetas();
 }
@@ -1050,10 +1174,17 @@ function initMovForm(){
     ei.onchange=()=>{const i=stock[ei.value];$('ent-unidad').value=i?i.u:'';$('ent-precio').value=i?i.p:'';};
     ei.dispatchEvent(new Event('change'));
   }
+  const mi=$('mer-insumo');
+  if(mi){
+    mi.innerHTML=opts.map(n=>`<option value="${n}">${n}</option>`).join('');
+    mi.onchange=()=>{const i=stock[mi.value];$('mer-unidad').value=i?i.u:'';};
+    mi.dispatchEvent(new Event('change'));
+  }
   const si=$('sal-ins-sel');if(si)si.innerHTML=opts.map(n=>`<option value="${n}">${n}</option>`).join('');
   const sp=$('sal-producto');if(sp)sp.innerHTML=prods.map(p=>`<option value="${p.nom}">${p.nom}</option>`).join('');
   if(!$('ent-fecha').value)$('ent-fecha').value=today();
   if(!$('sal-fecha').value)$('sal-fecha').value=today();
+  if(!$('mer-fecha').value)$('mer-fecha').value=today();
 }
 
 function registrarEntrada(){
@@ -1163,42 +1294,7 @@ function exportCSV(){
   a.download='movimientos.csv';a.click();
 }
 
-// ══ PRODUCTOS ══
-function renderProdLista(){
-  const now=new Date();
-  const critCount=prods.filter(p=>p.st<=p.min).length;
-  $('dot-productos').classList.toggle('show',critCount>0);
-  const cats=[...new Set(prods.map(p=>p.cat))];
-  $('prod-list-container').innerHTML=cats.map(cat=>{
-    const catProds=prods.filter(p=>p.cat===cat);
-    return `<div class="card mb1">
-      <div style="padding:0.65rem 1rem 0;display:flex;align-items:center;gap:0.5rem">
-        <span style="font-size:1rem">${ICONS[cat]||'🛍️'}</span>
-        <span style="font-size:0.72rem;font-weight:800;color:var(--mid);text-transform:uppercase;letter-spacing:0.06em">${cat}</span>
-        <span class="badge b-lemon" style="margin-left:auto">${catProds.length}</span>
-      </div>
-      ${catProds.map(p=>{
-        const vm=movs.filter(m=>{const d=new Date(m.fecha+'T12:00:00');return m.tipo==='venta'&&(m.desc===p.nom||m.descripcion===p.nom)&&d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).reduce((a,b)=>a+b.cantidad,0);
-        const bCls=p.st<=0?'b-danger':p.st<=p.min?'b-warn':'b-ok';
-        const bLabel=p.st<=0?'🔴':p.st<=p.min?'🟡':'🟢';
-        return `<div class="list-row">
-          <div class="list-body">
-            <div class="list-name">${p.nom}</div>
-            <div class="list-sub">Stock: ${p.st} · Ventas: ${vm} · $${fmt(p.pv)}</div>
-          </div>
-          <div class="list-right" style="display:flex;flex-direction:column;align-items:flex-end;gap:0.3rem">
-            <span class="badge ${bCls}">${bLabel}</span>
-            <div style="display:flex;gap:0.3rem">
-              <button class="btn btn-ghost btn-xs" onclick="editarProd('${p.cod}')">✏️</button>
-              <button class="btn btn-ghost btn-xs" onclick="eliminarProd('${p.cod}')">🗑️</button>
-            </div>
-          </div>
-        </div>`;
-      }).join('')}
-    </div>`;
-  }).join('');
-}
-
+// ══ ANALISIS Y STOCK CRÍTICO ══
 function renderAnalisis(){
   const now=new Date();
   const vm=movs.filter(m=>{const d=new Date(m.fecha+'T12:00:00');return m.tipo==='venta'&&d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();});
@@ -1243,36 +1339,6 @@ function renderStockCritico(){
   $('stock-critico-body').innerHTML=html;
 }
 
-function openModalProd(){
-  $('pe-cod-edit').value='';
-  ['pe-cod','pe-nom','pe-precio','pe-stock','pe-min'].forEach(id=>$(id).value='');
-  $('pe-receta').innerHTML='<option value="">Sin receta</option>'+Object.keys(RD).map(r=>`<option value="${r}">${r}</option>`).join('');
-  $('modal-prod-title').textContent='Nuevo Producto';
-  openModal('modal-prod');
-}
-
-function editarProd(cod){
-  const p=prods.find(x=>x.cod===cod);if(!p)return;
-  $('pe-cod-edit').value=cod;$('pe-cod').value=p.cod;$('pe-nom').value=p.nom;
-  $('pe-cat').value=p.cat;$('pe-precio').value=p.pv;$('pe-stock').value=p.st;$('pe-min').value=p.min;
-  $('pe-receta').innerHTML='<option value="">Sin receta</option>'+Object.keys(RD).map(r=>`<option value="${r}" ${r===p.rec?'selected':''}>${r}</option>`).join('');
-  $('modal-prod-title').textContent='Editar Producto';
-  openModal('modal-prod');
-}
-
-function guardarProd(){
-  const ec=$('pe-cod-edit').value;
-  const p={cod:$('pe-cod').value.trim(),nom:$('pe-nom').value.trim(),cat:$('pe-cat').value,pv:parseFloat($('pe-precio').value)||0,st:parseInt($('pe-stock').value)||0,min:parseInt($('pe-min').value)||5,rec:$('pe-receta').value};
-  if(!p.nom||!p.cod){toast('Nombre y código requeridos.','danger');return;}
-  if(ec){const i=prods.findIndex(x=>x.cod===ec);if(i!==-1)prods[i]=p;}else prods.push(p);
-  S('p3_prods',prods);closeModal('modal-prod');renderProdLista();toast('✅ Producto guardado.');
-}
-
-function eliminarProd(cod){
-  if(!confirm('¿Eliminar este producto?'))return;
-  prods=prods.filter(p=>p.cod!==cod);S('p3_prods',prods);renderProdLista();toast('Eliminado.','warn');
-}
-
 // ══ CALCULADORA ══
 function initCalc(){
   $('calc-prod').innerHTML=Object.keys(RD).map(r=>`<option value="${r}">${r}</option>`).join('');
@@ -1310,6 +1376,192 @@ function ejecutarProd(){
   calcularProd();
 }
 
+// ══ MERMAS ══
+function registrarMerma(){
+  const fecha=$('mer-fecha').value,ins=$('mer-insumo').value,
+    cant=parseFloat($('mer-cantidad').value),
+    motivo=$('mer-motivo').value,obs=$('mer-obs').value;
+  if(!fecha||!ins||isNaN(cant)||cant<=0){toast('Completa los campos requeridos.','danger');return;}
+  if(stock[ins].s<cant&&!confirm(`⚠️ Stock insuficiente (disponible: ${fmtN(stock[ins].s)}). ¿Continuar de todas formas?`))return;
+  stock[ins].s=Math.max(0,stock[ins].s-cant);S('p3_stock',stock);
+  movs.push({id:Date.now(),fecha,tipo:'merma',desc:`Merma: ${ins}`,descripcion:`Merma: ${ins}`,cantidad:cant,total:0,obs:`${motivo} — ${obs}`});
+  S('p3_movs',movs);
+  $('mer-cantidad').value='';$('mer-obs').value='';
+  renderMermasMes();renderStockTable();
+  toast(`🗑️ Merma registrada: ${fmtN(cant)} de ${ins}`,'warn');
+}
+
+function renderMermasMes(){
+  const now=new Date();
+  const mm=movs.filter(m=>{const d=new Date(m.fecha+'T12:00:00');return m.tipo==='merma'&&d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();});
+  const tm=mm.length,el=$('mermas-mes');if(!el)return;
+  el.innerHTML=`<div style="display:flex;gap:0.5rem;padding:0.2rem 0 0.8rem">
+    <div style="flex:1;background:var(--warn-bg);border-radius:var(--r-sm);padding:0.7rem;text-align:center">
+      <div style="font-size:1.4rem;font-weight:800;color:var(--warn)">${tm}</div>
+      <div style="font-size:0.65rem;font-weight:700;color:var(--warn);opacity:0.8">MERMAS DEL MES</div>
+    </div>
+    <div style="flex:1;background:var(--danger-bg);border-radius:var(--r-sm);padding:0.7rem;text-align:center">
+      <div style="font-size:1.4rem;font-weight:800;color:var(--danger)">${mm.reduce((a,b)=>a+b.cantidad,0).toFixed(2)}</div>
+      <div style="font-size:0.65rem;font-weight:700;color:var(--danger);opacity:0.8">UNID. PERDIDAS</div>
+    </div>
+  </div>
+  ${mm.slice(-6).reverse().map(m=>`<div class="list-row">
+    <div class="list-icon li-lemon">🗑️</div>
+    <div class="list-body"><div class="list-name" style="font-size:0.8rem">${m.desc}</div><div class="list-sub">${fmtD(m.fecha)} · ${m.obs||''}</div></div>
+    <div class="list-right"><div class="list-val t-warn">${m.cantidad}</div></div>
+  </div>`).join('')||'<div class="empty" style="padding:1rem"><p>Sin mermas este mes ✅</p></div>'}`;
+}
+
+// ══ MATERIAS PRIMAS ══
+const CAT_ICONS={Harinas:'🌾',Lacteos:'🥛',Azúcares:'🍬',Chocolates:'🍫',Huevos:'🥚',Pulpas:'🍓',Leudantes:'⚗️',Esencias:'🌸',Especias:'🌿',Confites:'🍪',Frutos_secos:'🥜',Verduras:'🥕',Espesantes:'🧪',Líquidos:'💧',Condimentos:'🧂',Otros:'📦'};
+
+function renderMPLista(){
+  const critCount=Object.values(stock).filter(i=>i.s<=(i.min||2)).length;
+  $('dot-productos').classList.toggle('show',critCount>0);
+  const cats=[...new Set(Object.values(stock).map(i=>i.cat))].sort();
+  $('prod-list-container').innerHTML=cats.map(cat=>{
+    const catInsumos=Object.entries(stock).filter(([k,v])=>v.cat===cat).sort((a,b)=>a[0].localeCompare(b[0]));
+    return `<div class="card mb1">
+      <div style="padding:0.65rem 1rem 0;display:flex;align-items:center;gap:0.5rem">
+        <span style="font-size:1rem">${CAT_ICONS[cat]||'📦'}</span>
+        <span style="font-size:0.72rem;font-weight:800;color:var(--mid);text-transform:uppercase;letter-spacing:0.06em">${cat}</span>
+        <span class="badge b-lemon" style="margin-left:auto">${catInsumos.length}</span>
+      </div>
+      ${catInsumos.map(([nom,i])=>{
+        const bCls=i.s<=0?'b-danger':i.s<=(i.min||2)?'b-warn':'b-ok';
+        return `<div class="list-row">
+          <div class="list-body">
+            <div class="list-name">${nom}</div>
+            <div class="list-sub">Stock: <strong>${fmtN(i.s)}</strong> ${i.u} · Precio: $${fmt(i.p||0)}</div>
+          </div>
+          <div class="list-right" style="display:flex;flex-direction:column;align-items:flex-end;gap:0.3rem">
+            <span class="badge ${bCls}">${i.s<=0?'🔴 Agotado':i.s<=(i.min||2)?'🟡 Bajo':'🟢 OK'}</span>
+            <div style="display:flex;gap:0.3rem">
+              <button class="btn btn-ghost btn-xs" onclick="editarMP('${nom.replace(/'/g,"\\'")}')">✏️</button>
+              <button class="btn btn-ghost btn-xs" onclick="eliminarMP('${nom.replace(/'/g,"\\'")}')">🗑️</button>
+            </div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('')||'<div class="empty"><div class="ei">📦</div><p>Sin materias primas</p></div>';
+}
+
+function openModalMP(){
+  $('mp-edit-key').value='';
+  ['mp-nom','mp-precio','mp-stock','mp-min'].forEach(id=>$(id).value='');
+  $('mp-unidad').value='KG';$('mp-cat').value='Harinas';
+  $('modal-mp-title').textContent='Nueva Materia Prima';
+  openModal('modal-mp');
+}
+
+function editarMP(nom){
+  const i=stock[nom];if(!i)return;
+  $('mp-edit-key').value=nom;$('mp-nom').value=nom;
+  $('mp-unidad').value=i.u;$('mp-cat').value=i.cat;
+  $('mp-precio').value=i.p||0;$('mp-stock').value=i.s;$('mp-min').value=i.min||2;
+  $('modal-mp-title').textContent='Editar Materia Prima';
+  openModal('modal-mp');
+}
+
+function guardarMP(){
+  const editKey=$('mp-edit-key').value;
+  const nom=$('mp-nom').value.trim().toUpperCase();
+  if(!nom){toast('El nombre es requerido.','danger');return;}
+  const datos={s:parseFloat($('mp-stock').value)||0,u:$('mp-unidad').value,p:parseFloat($('mp-precio').value)||0,cat:$('mp-cat').value,min:parseFloat($('mp-min').value)||2};
+  if(editKey&&editKey!==nom){delete stock[editKey];}// renombrar
+  stock[nom]=datos;
+  S('p3_stock',stock);closeModal('modal-mp');renderMPLista();
+  // Refrescar selects de movimientos si están visibles
+  const ei=$('ent-insumo');if(ei)ei.innerHTML=Object.keys(stock).sort().map(n=>`<option value="${n}">${n}</option>`).join('');
+  toast('✅ Materia prima guardada.');
+}
+
+function eliminarMP(nom){
+  if(!confirm(`¿Eliminar "${nom}" del inventario?`))return;
+  delete stock[nom];S('p3_stock',stock);renderMPLista();toast('Eliminado.','warn');
+}
+
+// ══ RECETAS — EDITAR ══
+let recIngTmp=[];// ingredientes temporales al editar receta
+
+function openModalReceta(nomExistente){
+  recIngTmp=[];
+  if(nomExistente){
+    const r=RD[nomExistente];if(!r)return;
+    $('rec-edit-key').value=nomExistente;
+    $('rec-nom').value=nomExistente;$('rec-cod').value=r.c;$('rec-col').value=r.col||'pink';
+    recIngTmp=[...r.i.map(i=>({...i}))];
+    $('modal-receta-title').textContent='Editar Receta';
+  }else{
+    $('rec-edit-key').value='';$('rec-nom').value='';$('rec-cod').value='';$('rec-col').value='pink';
+    $('modal-receta-title').textContent='Nueva Receta';
+  }
+  renderIngTmp();openModal('modal-receta');
+}
+
+function renderIngTmp(){
+  $('rec-ings-list').innerHTML=recIngTmp.length===0
+    ?'<div style="font-size:0.78rem;color:var(--soft);padding:0.5rem 0">Sin ingredientes aún — agrega uno abajo</div>'
+    :recIngTmp.map((i,idx)=>`
+      <div style="display:grid;grid-template-columns:1fr 90px 64px 32px;gap:0.35rem;align-items:center;padding:0.4rem 0;border-bottom:1px solid var(--border)">
+        <div style="font-size:0.8rem;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${cap(i.n)}</div>
+        <input type="number" value="${i.q}" min="0" step="0.001"
+          style="padding:0.38rem 0.5rem;font-size:0.82rem;font-weight:700;color:var(--lilac-d);border:2px solid var(--lilac);border-radius:8px;background:var(--lilac-s);text-align:center"
+          onchange="editarCantIng(${idx},this.value)"
+          oninput="editarCantIng(${idx},this.value)">
+        <select style="padding:0.38rem 0.3rem;font-size:0.78rem;font-weight:700;border:2px solid var(--border);border-radius:8px;background:white;color:var(--mid)"
+          onchange="editarUnidadIng(${idx},this.value)">
+          ${['g','kg','ml','l','un'].map(u=>`<option value="${u}" ${u===i.u?'selected':''}>${u}</option>`).join('')}
+        </select>
+        <button onclick="eliminarIngTmp(${idx})"
+          style="width:28px;height:28px;border-radius:50%;background:var(--danger-bg);border:1.5px solid var(--danger);color:var(--danger);font-size:0.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:800">✕</button>
+      </div>`).join('');
+}
+
+function agregarIngrediente(){
+  const n=$('ri-nom').value.trim().toLowerCase();
+  const q=parseFloat($('ri-cant').value);
+  const u=$('ri-unidad').value;
+  if(!n||isNaN(q)||q<=0){toast('Completa nombre y cantidad.','danger');return;}
+  recIngTmp.push({n,q,u});
+  $('ri-nom').value='';$('ri-cant').value='';
+  renderIngTmp();
+}
+
+function editarCantIng(idx, val){
+  const q = parseFloat(val);
+  if(!isNaN(q) && q >= 0) recIngTmp[idx].q = q;
+}
+
+function editarUnidadIng(idx, val){
+  recIngTmp[idx].u = val;
+}
+
+function eliminarIngTmp(idx){recIngTmp.splice(idx,1);renderIngTmp();}
+
+function guardarReceta(){
+  const editKey=$('rec-edit-key').value;
+  const nom=$('rec-nom').value.trim();
+  const cod=parseInt($('rec-cod').value)||Math.floor(3100+Math.random()*900);
+  const col=$('rec-col').value;
+  if(!nom){toast('El nombre es requerido.','danger');return;}
+  if(recIngTmp.length===0){toast('Agrega al menos un ingrediente.','danger');return;}
+  if(editKey&&editKey!==nom)delete RD[editKey];
+  RD[nom]={c:cod,col,i:[...recIngTmp]};
+  closeModal('modal-receta');renderRecetas();
+  toast('✅ Receta guardada.');
+}
+
+function eliminarReceta(nom){
+  if(!confirm(`¿Eliminar la receta "${nom}"?`))return;
+  delete RD[nom];renderRecetas();toast('Receta eliminada.','warn');
+}
+
+// ══ PRODUCTOS (mantener para ventas) ══
+function renderProdLista(){renderMPLista();}// alias
+function openModalProd(){openModalMP();}
+
 // ══ RECETAS ══
 function filterRec(f,btn){
   recFilt=f;
@@ -1335,7 +1587,11 @@ function renderRecetas(){
       return `<div class="rec-card">
         <div class="rec-head" style="background:${bg}">
           <div><div class="rec-name">${nom}</div><div class="rec-code" style="color:${dc}">Cód: ${d.c} · ${d.i.length} ingredientes</div></div>
-          <button class="btn-ghost" onclick="usarEnCalc('${nom}')" style="font-size:1.3rem;cursor:pointer;background:rgba(255,255,255,0.6);border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:none">🧮</button>
+          <div style="display:flex;gap:0.4rem">
+            <button style="font-size:1.1rem;cursor:pointer;background:rgba(255,255,255,0.7);border-radius:8px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border:none" onclick="openModalReceta('${nom.replace(/'/g,"\\'")}')">✏️</button>
+            <button style="font-size:1.1rem;cursor:pointer;background:rgba(255,255,255,0.7);border-radius:8px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border:none" onclick="usarEnCalc('${nom.replace(/'/g,"\\'")}')">🧮</button>
+            <button style="font-size:1.1rem;cursor:pointer;background:rgba(255,200,200,0.8);border-radius:8px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border:none" onclick="eliminarReceta('${nom.replace(/'/g,"\\'")}')">🗑️</button>
+          </div>
         </div>
         <div class="rec-body">
           ${d.i.map(i=>`<div class="ing-row"><span class="ing-n">${cap(i.n)}</span><span class="ing-v">${fmtN(i.q)} ${i.u}</span></div>`).join('')}
