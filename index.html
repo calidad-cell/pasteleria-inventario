@@ -484,7 +484,8 @@ table{width:100%;border-collapse:collapse;font-size:0.79rem;}
 th{background:var(--lilac-d);color:#fff;padding:0.55rem 0.75rem;text-align:left;font-size:0.68rem;font-weight:800;letter-spacing:0.05em;white-space:nowrap;}
 td{padding:0.55rem 0.75rem;border-bottom:2px solid var(--border);vertical-align:middle;}
 tr:last-child td{border-bottom:none;}
-tr:nth-child(even) td{background:rgba(220,208,255,0.12);}
+tr:nth-child(even) td{background:rgba(220,208,255,0.08);}
+tfoot td{border-top:2px solid var(--lilac-d);border-bottom:none;}
 
 /* ─── BOTTOM NAV ─── */
 .nav{
@@ -700,6 +701,12 @@ tr:nth-child(even) td{background:rgba(220,208,255,0.12);}
             </select>
           </div>
           <div id="sal-prod-sec">
+            <div class="fg"><label>Local</label>
+              <select id="sal-local">
+                <option value="Brutal Valdivia">🏪 Brutal Valdivia</option>
+                <option value="Brutal Centro">🏬 Brutal Centro</option>
+              </select>
+            </div>
             <div class="fg"><label>Producto</label><select id="sal-producto" onchange="onSalidaProd()"></select></div>
             <div class="row2">
               <div class="fg" style="margin:0"><label>Unidades</label><input type="number" id="sal-cant-prod" placeholder="0" min="1"></div>
@@ -762,20 +769,64 @@ tr:nth-child(even) td{background:rgba(220,208,255,0.12);}
   <div id="mov-historial" style="display:none">
     <div class="ph-pad">
       <div class="card"><div class="card-pad">
-        <div class="card-title">Historial</div>
-        <div class="row2" style="margin-bottom:0.7rem">
-          <div class="fg" style="margin:0"><label>Desde</label><input type="date" id="hist-desde"></div>
-          <div class="fg" style="margin:0"><label>Hasta</label><input type="date" id="hist-hasta"></div>
+        <div class="card-title">📋 Planilla de Movimientos</div>
+
+        <!-- Filtros -->
+        <div style="background:var(--lav-s);border-radius:var(--r-sm);padding:0.8rem;border:1.5px solid var(--lilac);margin-bottom:0.9rem">
+          <div style="font-size:0.7rem;font-weight:800;color:var(--lilac-d);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.6rem">🔍 Filtros</div>
+          <div class="row2" style="margin-bottom:0.5rem">
+            <div class="fg" style="margin:0"><label>Desde</label><input type="date" id="hist-desde"></div>
+            <div class="fg" style="margin:0"><label>Hasta</label><input type="date" id="hist-hasta"></div>
+          </div>
+          <div class="row2" style="margin-bottom:0.5rem">
+            <div class="fg" style="margin:0"><label>Tipo</label>
+              <select id="hist-tipo">
+                <option value="">Todos</option>
+                <option value="entrada">⬇️ Entradas</option>
+                <option value="venta">💰 Ventas</option>
+                <option value="salida">⬆️ Salidas</option>
+                <option value="merma">🗑️ Mermas</option>
+                <option value="produccion">🎂 Producción</option>
+              </select>
+            </div>
+            <div class="fg" style="margin:0"><label>Local</label>
+              <select id="hist-local">
+                <option value="">Todos los locales</option>
+                <option value="Brutal Valdivia">Brutal Valdivia</option>
+                <option value="Brutal Centro">Brutal Centro</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex;gap:0.5rem">
+            <button class="btn btn-lilac btn-sm btn-full" onclick="renderHistorial()">🔍 Aplicar filtros</button>
+            <button class="btn btn-outline btn-sm" onclick="limpiarFiltros()">✕ Limpiar</button>
+            <button class="btn btn-mint btn-sm" onclick="exportCSV()">⬇️ CSV</button>
+          </div>
         </div>
-        <div style="display:flex;gap:0.5rem;margin-bottom:0.8rem;">
-          <select id="hist-tipo" style="flex:1"><option value="">Todos</option><option value="entrada">Entradas</option><option value="venta">Ventas</option><option value="salida">Salidas</option><option value="merma">Mermas</option></select>
-          <button class="btn btn-lilac btn-sm" onclick="renderHistorial()">Filtrar</button>
-          <button class="btn btn-outline btn-sm" onclick="exportCSV()">CSV</button>
+
+        <!-- Resumen rápido -->
+        <div id="hist-resumen" style="display:flex;gap:0.5rem;margin-bottom:0.8rem;overflow-x:auto"></div>
+
+        <!-- Tabla planilla -->
+        <div class="tw">
+          <table id="hist-table">
+            <thead>
+              <tr>
+                <th style="cursor:pointer" onclick="sortHistorial('fecha')">Fecha ↕</th>
+                <th>Tipo</th>
+                <th>Local</th>
+                <th>Descripción</th>
+                <th style="text-align:right">Cant.</th>
+                <th style="text-align:right">Precio u.</th>
+                <th style="text-align:right">Total</th>
+                <th>Obs.</th>
+              </tr>
+            </thead>
+            <tbody id="hist-tbody"></tbody>
+            <tfoot id="hist-tfoot"></tfoot>
+          </table>
         </div>
-        <div class="tw"><table>
-          <thead><tr><th>Fecha</th><th>Tipo</th><th>Descripción</th><th>Cant.</th><th>Total</th></tr></thead>
-          <tbody id="hist-tbody"></tbody>
-        </table></div>
+        <div id="hist-count" style="font-size:0.7rem;color:var(--soft);font-weight:600;text-align:right;margin-top:0.5rem"></div>
       </div></div>
     </div>
   </div>
@@ -1223,6 +1274,7 @@ function registrarSalida(){
   if(!fecha){toast('Selecciona fecha.','danger');return;}
   if(tipo==='venta'){
     const pn=$('sal-producto').value,cant=parseInt($('sal-cant-prod').value),pv=parseFloat($('sal-precio-venta').value)||0;
+    const local=$('sal-local').value;
     if(!pn||isNaN(cant)||cant<=0){toast('Completa los campos.','danger');return;}
     const prod=prods.find(p=>p.nom===pn);
     if(prod){
@@ -1231,16 +1283,16 @@ function registrarSalida(){
       if(r){r.i.forEach(ing=>{const k=Object.keys(stock).find(k=>k.toLowerCase()===ing.n.toLowerCase());if(k)stock[k].s=Math.max(0,stock[k].s-ing.q*cant);});S('p3_stock',stock);}
       S('p3_prods',prods);
     }
-    movs.push({id:Date.now(),fecha,tipo:'venta',desc:pn,descripcion:pn,cantidad:cant,total:cant*pv,obs});
+    movs.push({id:Date.now(),fecha,tipo:'venta',desc:pn,descripcion:pn,cantidad:cant,precioU:pv,total:cant*pv,local,obs});
     S('p3_movs',movs);
-    toast(`✅ Venta: ${cant}× ${pn}`);
+    toast(`✅ Venta: ${cant}× ${pn} — ${local}`);
     $('sal-cant-prod').value='';$('sal-precio-venta').value='';
   }else{
     const ins=$('sal-ins-sel').value,cant=parseFloat($('sal-ins-cant').value);
     if(!ins||isNaN(cant)||cant<=0){toast('Completa los campos.','danger');return;}
     if(stock[ins].s<cant){toast('Stock insuficiente.','warn');return;}
     stock[ins].s-=cant;S('p3_stock',stock);
-    movs.push({id:Date.now(),fecha,tipo:'salida',desc:'Salida: '+ins,descripcion:'Salida: '+ins,cantidad:cant,total:0,obs});
+    movs.push({id:Date.now(),fecha,tipo:'salida',desc:'Salida: '+ins,descripcion:'Salida: '+ins,cantidad:cant,precioU:0,total:0,local:'',obs});
     S('p3_movs',movs);
     toast(`✅ Salida: ${fmtN(cant)} de ${ins}`);
     $('sal-ins-cant').value='';
@@ -1252,46 +1304,145 @@ function renderVentasMes(){
   const now=new Date();
   const vm=movs.filter(m=>{const d=new Date(m.fecha+'T12:00:00');return m.tipo==='venta'&&d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();});
   const tv=vm.reduce((a,b)=>a+(b.total||0),0),uv=vm.reduce((a,b)=>a+b.cantidad,0);
+  const vv=vm.filter(m=>m.local==='Brutal Valdivia').reduce((a,b)=>a+(b.total||0),0);
+  const vc=vm.filter(m=>m.local==='Brutal Centro').reduce((a,b)=>a+(b.total||0),0);
   const el=$('ventas-mes');if(!el)return;
-  el.innerHTML=`<div style="display:flex;gap:0.5rem;padding:0.2rem 0 0.8rem">
-    <div style="flex:1;background:var(--mint-m);border-radius:var(--r-sm);padding:0.7rem;text-align:center">
-      <div style="font-size:1.1rem;font-weight:800;color:var(--mint-d)">$${fmt(tv)}</div>
-      <div style="font-size:0.65rem;font-weight:700;color:var(--mint-d);opacity:0.8">TOTAL VENTAS</div>
+  el.innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:0.7rem">
+      <div style="background:var(--mint-s);border-radius:var(--r-sm);padding:0.7rem;text-align:center;border:1.5px solid var(--mint)">
+        <div style="font-size:1.1rem;font-weight:800;color:var(--mint-d)">$${fmt(tv)}</div>
+        <div style="font-size:0.62rem;font-weight:800;color:var(--mint-d);opacity:0.8">TOTAL MES</div>
+      </div>
+      <div style="background:var(--blue-s);border-radius:var(--r-sm);padding:0.7rem;text-align:center;border:1.5px solid var(--blue)">
+        <div style="font-size:1.1rem;font-weight:800;color:var(--blue-d)">${uv}</div>
+        <div style="font-size:0.62rem;font-weight:800;color:var(--blue-d);opacity:0.8">UNIDADES</div>
+      </div>
+      <div style="background:var(--pink-s);border-radius:var(--r-sm);padding:0.6rem;border:1.5px solid var(--pink)">
+        <div style="font-size:0.65rem;font-weight:800;color:var(--pink-d);margin-bottom:0.1rem">🏪 Brutal Valdivia</div>
+        <div style="font-size:1rem;font-weight:800;color:var(--pink-d)">$${fmt(vv)}</div>
+      </div>
+      <div style="background:var(--lilac-s);border-radius:var(--r-sm);padding:0.6rem;border:1.5px solid var(--lilac)">
+        <div style="font-size:0.65rem;font-weight:800;color:var(--lilac-d);margin-bottom:0.1rem">🏬 Brutal Centro</div>
+        <div style="font-size:1rem;font-weight:800;color:var(--lilac-d)">$${fmt(vc)}</div>
+      </div>
     </div>
-    <div style="flex:1;background:var(--blue-m);border-radius:var(--r-sm);padding:0.7rem;text-align:center">
-      <div style="font-size:1.1rem;font-weight:800;color:var(--blue-d)">${uv}</div>
-      <div style="font-size:0.65rem;font-weight:700;color:var(--blue-d);opacity:0.8">UNIDADES</div>
-    </div>
-  </div>
-  ${vm.slice(-6).reverse().map(m=>`<div class="list-row">
-    <div class="list-icon li-pink">💰</div>
-    <div class="list-body"><div class="list-name" style="font-size:0.8rem">${m.desc||m.descripcion}</div><div class="list-sub">${fmtD(m.fecha)} · ${m.cantidad} un.</div></div>
-    <div class="list-right"><div class="list-val t-ok" style="font-size:0.82rem">$${fmt(m.total)}</div></div>
-  </div>`).join('')||'<div class="empty" style="padding:1rem"><p>Sin ventas este mes</p></div>'}`;
+    ${vm.slice(-8).reverse().map(m=>`<div class="list-row">
+      <div class="list-icon ${m.local==='Brutal Valdivia'?'li-pink':'li-lilac'}">${m.local==='Brutal Valdivia'?'🏪':'🏬'}</div>
+      <div class="list-body">
+        <div class="list-name" style="font-size:0.8rem">${m.desc||m.descripcion}</div>
+        <div class="list-sub">${fmtD(m.fecha)} · ${m.cantidad} un. · ${m.local||'—'}</div>
+      </div>
+      <div class="list-right"><div class="list-val t-ok" style="font-size:0.82rem">$${fmt(m.total)}</div></div>
+    </div>`).join('')||'<div class="empty" style="padding:1rem"><p>Sin ventas este mes</p></div>'}`;
 }
 
+let histSortDir = -1; // -1 desc, 1 asc
+
+function limpiarFiltros(){
+  const now=new Date();
+  $('hist-desde').value=new Date(now.getFullYear(),now.getMonth(),1).toISOString().split('T')[0];
+  $('hist-hasta').value=today();
+  $('hist-tipo').value='';$('hist-local').value='';
+  renderHistorial();
+}
+
+function sortHistorial(campo){
+  histSortDir*=-1;renderHistorial();
+}
+
+const TIPO_BADGE={entrada:'b-mint',venta:'b-pink',salida:'b-warn',merma:'b-danger',produccion:'b-lilac'};
+const TIPO_ICON={entrada:'⬇️',venta:'💰',salida:'⬆️',merma:'🗑️',produccion:'🎂'};
+
 function renderHistorial(){
-  const desde=$('hist-desde').value,hasta=$('hist-hasta').value,tipo=$('hist-tipo').value;
+  const desde=$('hist-desde').value,hasta=$('hist-hasta').value;
+  const tipo=$('hist-tipo').value,local=$('hist-local').value;
   let f=[...movs];
-  if(desde)f=f.filter(m=>m.fecha>=desde);if(hasta)f=f.filter(m=>m.fecha<=hasta);
-  if(tipo)f=f.filter(m=>m.tipo===tipo);f.sort((a,b)=>b.id-a.id);
-  $('hist-tbody').innerHTML=f.length===0
-    ?'<tr><td colspan="5" class="t-soft" style="text-align:center;padding:1.5rem;font-weight:600">Sin movimientos</td></tr>'
-    :f.map(m=>`<tr>
-      <td style="font-size:0.7rem;white-space:nowrap">${fmtD(m.fecha)}</td>
-      <td><span class="badge ${m.tipo==='entrada'?'b-mint':m.tipo==='venta'?'b-pink':'b-warn'}" style="font-size:0.6rem">${cap(m.tipo)}</span></td>
-      <td style="font-size:0.75rem;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.desc||m.descripcion}</td>
-      <td style="font-weight:700">${m.cantidad}</td>
-      <td style="font-weight:800;color:var(--ok)">$${fmt(m.total||0)}</td>
-    </tr>`).join('');
+  if(desde)f=f.filter(m=>m.fecha>=desde);
+  if(hasta)f=f.filter(m=>m.fecha<=hasta);
+  if(tipo)f=f.filter(m=>m.tipo===tipo);
+  if(local)f=f.filter(m=>m.local===local);
+  f.sort((a,b)=>histSortDir*(a.fecha<b.fecha?-1:a.fecha>b.fecha?1:0));
+
+  // Resumen
+  const totV=f.filter(m=>m.tipo==='venta').reduce((a,b)=>a+(b.total||0),0);
+  const totE=f.filter(m=>m.tipo==='entrada').reduce((a,b)=>a+(b.total||0),0);
+  const totM=f.filter(m=>m.tipo==='merma').length;
+  $('hist-resumen').innerHTML=`
+    <div style="background:var(--mint-s);border-radius:10px;padding:0.55rem 0.8rem;min-width:90px;text-align:center;border:1.5px solid var(--mint);flex-shrink:0">
+      <div style="font-size:0.95rem;font-weight:800;color:var(--mint-d)">$${fmt(totV)}</div>
+      <div style="font-size:0.58rem;font-weight:800;color:var(--mint-d)">VENTAS</div>
+    </div>
+    <div style="background:var(--blue-s);border-radius:10px;padding:0.55rem 0.8rem;min-width:90px;text-align:center;border:1.5px solid var(--blue);flex-shrink:0">
+      <div style="font-size:0.95rem;font-weight:800;color:var(--blue-d)">$${fmt(totE)}</div>
+      <div style="font-size:0.58rem;font-weight:800;color:var(--blue-d)">ENTRADAS</div>
+    </div>
+    <div style="background:var(--warn-bg);border-radius:10px;padding:0.55rem 0.8rem;min-width:80px;text-align:center;border:1.5px solid var(--warn);flex-shrink:0">
+      <div style="font-size:0.95rem;font-weight:800;color:var(--warn)">${totM}</div>
+      <div style="font-size:0.58rem;font-weight:800;color:var(--warn)">MERMAS</div>
+    </div>
+    <div style="background:var(--lav-s);border-radius:10px;padding:0.55rem 0.8rem;min-width:70px;text-align:center;border:1.5px solid var(--lav);flex-shrink:0">
+      <div style="font-size:0.95rem;font-weight:800;color:var(--lav-d)">${f.length}</div>
+      <div style="font-size:0.58rem;font-weight:800;color:var(--lav-d)">FILAS</div>
+    </div>
+  `;
+
+  // Totales pie de tabla
+  const sumaTotal=f.reduce((a,b)=>a+(b.total||0),0);
+  const sumaCant=f.reduce((a,b)=>a+b.cantidad,0);
+
+  $('hist-count').textContent=`${f.length} registros encontrados`;
+
+  if(f.length===0){
+    $('hist-tbody').innerHTML='<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--soft);font-weight:600">Sin registros con estos filtros</td></tr>';
+    $('hist-tfoot').innerHTML='';return;
+  }
+
+  $('hist-tbody').innerHTML=f.map((m,i)=>{
+    const bc=TIPO_BADGE[m.tipo]||'b-lemon';
+    const ic=TIPO_ICON[m.tipo]||'•';
+    const rowBg=i%2===0?'':'background:rgba(220,208,255,0.08)';
+    return `<tr style="${rowBg}">
+      <td style="font-size:0.72rem;white-space:nowrap;font-weight:600">${m.fecha}</td>
+      <td><span class="badge ${bc}" style="font-size:0.58rem">${ic} ${cap(m.tipo)}</span></td>
+      <td style="font-size:0.72rem;font-weight:700;color:var(--mid);white-space:nowrap">${m.local||'—'}</td>
+      <td style="font-size:0.75rem;font-weight:600;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${m.desc||m.descripcion||''}">${m.desc||m.descripcion||'—'}</td>
+      <td style="text-align:right;font-weight:800">${m.cantidad}</td>
+      <td style="text-align:right;font-size:0.72rem;color:var(--mid)">${m.precioU>0?'$'+fmt(m.precioU):'—'}</td>
+      <td style="text-align:right;font-weight:800;color:${m.tipo==='venta'?'var(--ok)':m.tipo==='merma'?'var(--danger)':'var(--text)'}">
+        ${m.total>0?'$'+fmt(m.total):'—'}
+      </td>
+      <td style="font-size:0.68rem;color:var(--soft);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.obs||''}</td>
+    </tr>`;
+  }).join('');
+
+  $('hist-tfoot').innerHTML=`<tr style="background:var(--lilac);font-weight:800">
+    <td colspan="4" style="padding:0.5rem 0.75rem;font-size:0.75rem;color:var(--lilac-d)">TOTALES (${f.length} registros)</td>
+    <td style="text-align:right;padding:0.5rem 0.75rem;color:var(--lilac-d)">${sumaCant}</td>
+    <td></td>
+    <td style="text-align:right;padding:0.5rem 0.75rem;color:var(--lilac-d)">$${fmt(sumaTotal)}</td>
+    <td></td>
+  </tr>`;
 }
 
 function exportCSV(){
-  const r=[['Fecha','Tipo','Descripcion','Cantidad','Total']];
-  movs.forEach(m=>r.push([m.fecha,m.tipo,m.desc||m.descripcion,m.cantidad,m.total||0]));
+  const desde=$('hist-desde')?.value||'',hasta=$('hist-hasta')?.value||'';
+  const tipo=$('hist-tipo')?.value||'',local=$('hist-local')?.value||'';
+  let f=[...movs];
+  if(desde)f=f.filter(m=>m.fecha>=desde);if(hasta)f=f.filter(m=>m.fecha<=hasta);
+  if(tipo)f=f.filter(m=>m.tipo===tipo);if(local)f=f.filter(m=>m.local===local);
+  f.sort((a,b)=>a.fecha<b.fecha?1:-1);
+
+  const rows=[['ID','Fecha','Tipo','Local','Descripcion','Cantidad','Precio Unitario','Total CLP','Observacion']];
+  f.forEach(m=>rows.push([
+    m.id||'',m.fecha,m.tipo,m.local||'',
+    m.desc||m.descripcion||'',m.cantidad,
+    m.precioU||0,m.total||0,m.obs||''
+  ]));
+  const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
   const a=document.createElement('a');
-  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(r.map(x=>x.map(c=>`"${c}"`).join(',')).join('\n'));
-  a.download='movimientos.csv';a.click();
+  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download=`movimientos_brutal_${today()}.csv`;a.click();
+  toast(`✅ ${f.length} registros exportados`);
 }
 
 // ══ ANALISIS Y STOCK CRÍTICO ══
