@@ -577,9 +577,14 @@ tfoot td{border-top:2px solid var(--lilac-d);border-bottom:none;}
 /* ─── SCREEN BACKGROUNDS ─── */
 #sc-dashboard{background:var(--bg-dash);}
 #sc-movimientos{background:var(--bg-mov);}
+#sc-historial{background:#eeeeff;}
 #sc-productos{background:var(--bg-prod);}
 #sc-calculadora{background:var(--bg-calc);}
 #sc-recetas{background:var(--bg-rec);}
+
+/* 6 tabs — labels más pequeños */
+.nb-lbl{font-size:0.55rem;font-weight:800;color:var(--mid);transition:color 0.2s;letter-spacing:0.02em;}
+.nb-icon{font-size:1.18rem;line-height:1;}
 
 /* ─── MISC ─── */
 .divider{border:none;border-top:2px solid var(--border);margin:0.8rem 0;}
@@ -654,7 +659,6 @@ tfoot td{border-top:2px solid var(--lilac-d);border-bottom:none;}
     <button class="pill active" onclick="switchSubTab('mov','entradas',this)">⬇️ Entrada</button>
     <button class="pill" onclick="switchSubTab('mov','salidas',this)">⬆️ Venta</button>
     <button class="pill" onclick="switchSubTab('mov','mermas',this)">🗑️ Mermas</button>
-    <button class="pill" onclick="switchSubTab('mov','historial',this)">📋 Historial</button>
   </div>
 
   <!-- Entradas -->
@@ -765,74 +769,80 @@ tfoot td{border-top:2px solid var(--lilac-d);border-bottom:none;}
     </div>
   </div>
 
-  <!-- Historial -->
-  <div id="mov-historial" style="display:none">
-    <div class="ph-pad">
-      <div class="card"><div class="card-pad">
-        <div class="card-title">📋 Planilla de Movimientos</div>
 
-        <!-- Filtros -->
-        <div style="background:var(--lav-s);border-radius:var(--r-sm);padding:0.8rem;border:1.5px solid var(--lilac);margin-bottom:0.9rem">
-          <div style="font-size:0.7rem;font-weight:800;color:var(--lilac-d);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.6rem">🔍 Filtros</div>
-          <div class="row2" style="margin-bottom:0.5rem">
-            <div class="fg" style="margin:0"><label>Desde</label><input type="date" id="hist-desde"></div>
-            <div class="fg" style="margin:0"><label>Hasta</label><input type="date" id="hist-hasta"></div>
-          </div>
-          <div class="row2" style="margin-bottom:0.5rem">
-            <div class="fg" style="margin:0"><label>Tipo</label>
-              <select id="hist-tipo">
-                <option value="">Todos</option>
-                <option value="entrada">⬇️ Entradas</option>
-                <option value="venta">💰 Ventas</option>
-                <option value="salida">⬆️ Salidas</option>
-                <option value="merma">🗑️ Mermas</option>
-                <option value="produccion">🎂 Producción</option>
-              </select>
-            </div>
-            <div class="fg" style="margin:0"><label>Local</label>
-              <select id="hist-local">
-                <option value="">Todos los locales</option>
-                <option value="Brutal Valdivia">Brutal Valdivia</option>
-                <option value="Brutal Centro">Brutal Centro</option>
-              </select>
-            </div>
-          </div>
-          <div style="display:flex;gap:0.5rem">
-            <button class="btn btn-lilac btn-sm btn-full" onclick="renderHistorial()">🔍 Aplicar filtros</button>
-            <button class="btn btn-outline btn-sm" onclick="limpiarFiltros()">✕ Limpiar</button>
-            <button class="btn btn-mint btn-sm" onclick="exportCSV()">⬇️ CSV</button>
-          </div>
-        </div>
-
-        <!-- Resumen rápido -->
-        <div id="hist-resumen" style="display:flex;gap:0.5rem;margin-bottom:0.8rem;overflow-x:auto"></div>
-
-        <!-- Tabla planilla -->
-        <div class="tw">
-          <table id="hist-table">
-            <thead>
-              <tr>
-                <th style="cursor:pointer" onclick="sortHistorial('fecha')">Fecha ↕</th>
-                <th>Tipo</th>
-                <th>Local</th>
-                <th>Descripción</th>
-                <th style="text-align:right">Cant.</th>
-                <th style="text-align:right">Precio u.</th>
-                <th style="text-align:right">Total</th>
-                <th>Obs.</th>
-              </tr>
-            </thead>
-            <tbody id="hist-tbody"></tbody>
-            <tfoot id="hist-tfoot"></tfoot>
-          </table>
-        </div>
-        <div id="hist-count" style="font-size:0.7rem;color:var(--soft);font-weight:600;text-align:right;margin-top:0.5rem"></div>
-      </div></div>
-    </div>
-  </div>
 </div>
 
-<!-- ═══ MATERIAS PRIMAS ═══ -->
+<!-- ═══ HISTORIAL ═══ -->
+
+<!-- ═══ HISTORIAL ═══ -->
+<div id="sc-historial" class="screen">
+  <div class="ph"><div class="ph-title">Planilla</div>
+    <button class="btn btn-mint btn-sm" onclick="exportCSV()">⬇️ CSV</button>
+  </div>
+  <div class="ph-pad">
+    <div class="card"><div class="card-pad">
+
+      <!-- Filtros -->
+      <div style="background:var(--lav-s);border-radius:var(--r-sm);padding:0.8rem;border:1.5px solid var(--lilac);margin-bottom:0.9rem">
+        <div style="font-size:0.7rem;font-weight:800;color:var(--lilac-d);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.6rem">🔍 Filtros</div>
+        <div class="row2" style="margin-bottom:0.5rem">
+          <div class="fg" style="margin:0"><label>Desde</label><input type="date" id="hist-desde"></div>
+          <div class="fg" style="margin:0"><label>Hasta</label><input type="date" id="hist-hasta"></div>
+        </div>
+        <div class="row2" style="margin-bottom:0.5rem">
+          <div class="fg" style="margin:0"><label>Tipo</label>
+            <select id="hist-tipo">
+              <option value="">Todos</option>
+              <option value="entrada">⬇️ Entradas</option>
+              <option value="venta">💰 Ventas</option>
+              <option value="salida">⬆️ Salidas</option>
+              <option value="merma">🗑️ Mermas</option>
+              <option value="produccion">🎂 Producción</option>
+            </select>
+          </div>
+          <div class="fg" style="margin:0"><label>Local</label>
+            <select id="hist-local">
+              <option value="">Todos los locales</option>
+              <option value="Brutal Valdivia">Brutal Valdivia</option>
+              <option value="Brutal Centro">Brutal Centro</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex;gap:0.5rem">
+          <button class="btn btn-lilac btn-sm btn-full" onclick="renderHistorial()">🔍 Aplicar</button>
+          <button class="btn btn-outline btn-sm" onclick="limpiarFiltros()">✕ Limpiar</button>
+        </div>
+      </div>
+
+      <!-- Resumen rápido -->
+      <div id="hist-resumen" style="display:flex;gap:0.5rem;margin-bottom:0.8rem;overflow-x:auto"></div>
+
+      <!-- Tabla planilla -->
+      <div class="tw">
+        <table id="hist-table">
+          <thead>
+            <tr>
+              <th style="cursor:pointer" onclick="sortHistorial('fecha')">Fecha ↕</th>
+              <th>Tipo</th>
+              <th>Local</th>
+              <th>Descripción</th>
+              <th style="text-align:right">Cant.</th>
+              <th style="text-align:right">Precio u.</th>
+              <th style="text-align:right">Total</th>
+              <th>Obs.</th>
+            </tr>
+          </thead>
+          <tbody id="hist-tbody"></tbody>
+          <tfoot id="hist-tfoot"></tfoot>
+        </table>
+      </div>
+      <div id="hist-count" style="font-size:0.7rem;color:var(--soft);font-weight:600;text-align:right;margin-top:0.5rem"></div>
+    </div></div>
+  </div>
+  <div style="height:1rem"></div>
+</div>
+
+
 <div id="sc-productos" class="screen">
   <div class="ph">
     <div class="ph-title">Materias Primas</div>
@@ -925,6 +935,10 @@ tfoot td{border-top:2px solid var(--lilac-d);border-bottom:none;}
   <button class="nb" id="nb-movimientos" onclick="switchScreen('movimientos',this)">
     <div class="nb-bg"><span class="nb-icon">📦</span></div>
     <span class="nb-lbl">Movimientos</span>
+  </button>
+  <button class="nb" id="nb-historial" onclick="switchScreen('historial',this)">
+    <div class="nb-bg"><span class="nb-icon">📋</span></div>
+    <span class="nb-lbl">Planilla</span>
   </button>
   <button class="nb" id="nb-productos" onclick="switchScreen('productos',this)">
     <div class="nb-dot" id="dot-productos"></div>
@@ -1078,37 +1092,204 @@ const INSUMOS_BASE=[
   {n:"AGUA",u:"LITRO",cat:"Líquidos",p:0},
 ];
 
-// ══ STATE ══
-const L=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch{return d;}};
-const S=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+// ══ FIREBASE CONFIG ══
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyBQOS7__htibsFLSh8sRjdjN4ReaWcb5AI",
+  authDomain: "app-pasteleriabrutal.firebaseapp.com",
+  databaseURL: "https://app-pasteleriabrutal-default-rtdb.firebaseio.com",
+  projectId: "app-pasteleriabrutal",
+  storageBucket: "app-pasteleriabrutal.firebasestorage.app",
+  messagingSenderId: "551805689927",
+  appId: "1:551805689927:web:c9a82eb8cd614feca09162"
+};
 
-let stock=L('p3_stock',{});
-let movs=L('p3_movs',[]);
-let prods=L('p3_prods',[]);
-let recFilt='todas';
+// ══ STATE (en memoria — Firebase es la fuente de verdad) ══
+let stock = {};
+let movs  = [];
+let prods = [];
+let recFilt = 'todas';
+let fbDB = null;   // referencia a la base de datos
+let fbReady = false;
 
-if(!Object.keys(stock).length){INSUMOS_BASE.forEach(i=>{stock[i.n]={s:0,u:i.u,p:i.p,cat:i.cat};});S('p3_stock',stock);}
-if(!prods.length){
-  prods=[
-    {cod:"3001",nom:"Brownie",cat:"Brownies",pv:3500,st:0,min:5,rec:"Brownie"},
-    {cod:"3002",nom:"Brownie pistacho",cat:"Brownies",pv:4500,st:0,min:5,rec:"Brownie pistacho"},
-    {cod:"3003",nom:"Brownie Ferrero",cat:"Brownies",pv:4500,st:0,min:5,rec:"Brownie Ferrero"},
-    {cod:"3004",nom:"Cheescake",cat:"Cheescakes",pv:18000,st:0,min:3,rec:"Cheescake"},
-    {cod:"3005",nom:"Cheescake Pistacho",cat:"Cheescakes",pv:22000,st:0,min:3,rec:"Cheescake Pistacho"},
-    {cod:"3006",nom:"Cheescake Oreo",cat:"Cheescakes",pv:20000,st:0,min:3,rec:"Cheescake Oreo"},
-    {cod:"3007",nom:"Cheescake Maracuya",cat:"Cheescakes",pv:20000,st:0,min:3,rec:"Cheescake Maracuya"},
-    {cod:"3008",nom:"Cheescake Berries",cat:"Cheescakes",pv:20000,st:0,min:3,rec:"Cheescake Berries"},
-    {cod:"3009",nom:"Galleta zanahoria",cat:"Galletas",pv:1800,st:0,min:10,rec:"Galleta zanahoria"},
-    {cod:"3010",nom:"Galletas Red velvet",cat:"Galletas",pv:1800,st:0,min:10,rec:"Galletas Red velvet"},
-    {cod:"3011",nom:"Galletas chips",cat:"Galletas",pv:1800,st:0,min:10,rec:"Galletas chips"},
-    {cod:"3012",nom:"Galletas Oreo",cat:"Galletas",pv:1800,st:0,min:10,rec:"Galletas Oreo"},
-    {cod:"3013",nom:"Galletas Café",cat:"Galletas",pv:1800,st:0,min:10,rec:"Galletas Café"},
-    {cod:"3014",nom:"Rollito canela",cat:"Rollitos",pv:2500,st:0,min:8,rec:"Rollito canela"},
-    {cod:"3015",nom:"Rollito pistacho",cat:"Rollitos",pv:3200,st:0,min:8,rec:"Rollito pistacho"},
-    {cod:"3016",nom:"Rollito Berries",cat:"Rollitos",pv:3000,st:0,min:8,rec:"Rollito Berries"},
-    {cod:"3017",nom:"Rollito Ferrero",cat:"Rollitos",pv:3200,st:0,min:8,rec:"Rollito Ferrero"},
-  ];
-  S('p3_prods',prods);
+// ══ CACHE LOCAL (respaldo offline) ══
+const LC = (k,d) => { try { const v=localStorage.getItem(k); return v?JSON.parse(v):d; } catch { return d; } };
+const LS = (k,v) => localStorage.setItem(k, JSON.stringify(v));
+
+// ══ FIREBASE — carga dinámica del SDK ══
+function loadFirebase(){
+  return new Promise((resolve) => {
+    // Mostrar indicador de conexión
+    showSyncStatus('connecting');
+
+    const script = document.createElement('script');
+    script.type = 'module';
+    script.textContent = `
+      import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+      import { getDatabase, ref, set, onValue, push, update, remove }
+        from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+      const app = initializeApp(${JSON.stringify(FIREBASE_CONFIG)});
+      const db  = getDatabase(app);
+
+      // Exponer funciones al scope global
+      window._fb = { ref, set, onValue, push, update, remove, db };
+      window.dispatchEvent(new Event('fb-ready'));
+    `;
+    document.head.appendChild(script);
+
+    window.addEventListener('fb-ready', () => {
+      fbDB = window._fb.db;
+      fbReady = true;
+      resolve();
+    }, { once: true });
+
+    // Timeout: si Firebase no carga en 5s, usar modo offline
+    setTimeout(() => {
+      if (!fbReady) {
+        console.warn('Firebase no disponible — modo offline');
+        showSyncStatus('offline');
+        cargarDesdeCache();
+        resolve();
+      }
+    }, 5000);
+  });
+}
+
+// ══ INDICADOR DE SINCRONIZACIÓN ══
+function showSyncStatus(estado) {
+  let dot = document.getElementById('sync-dot');
+  if (!dot) {
+    dot = document.createElement('div');
+    dot.id = 'sync-dot';
+    dot.style.cssText = `position:fixed;top:10px;right:10px;z-index:999;padding:0.25rem 0.6rem;border-radius:20px;font-size:0.65rem;font-weight:800;`;
+    document.body.appendChild(dot);
+  }
+  const estados = {
+    connecting: { bg:'#ffd54f', color:'#5d4037', txt:'⏳ Conectando...' },
+    online:     { bg:'#a5d6a7', color:'#1b5e20', txt:'🟢 Sincronizado'  },
+    saving:     { bg:'#90caf9', color:'#0d47a1', txt:'💾 Guardando...'  },
+    offline:    { bg:'#ffcdd2', color:'#b71c1c', txt:'🔴 Sin conexión'  },
+  };
+  const e = estados[estado] || estados.offline;
+  dot.style.background = e.bg;
+  dot.style.color = e.color;
+  dot.textContent = e.txt;
+  if (estado === 'online') setTimeout(() => { dot.style.opacity='0'; setTimeout(()=>dot.style.opacity='1',3000); }, 2000);
+}
+
+// ══ GUARDAR EN FIREBASE ══
+async function fbSet(path, data) {
+  if (!fbReady) { LS('p3_'+path, data); return; }
+  showSyncStatus('saving');
+  try {
+    const { ref, set } = window._fb;
+    await set(ref(fbDB, path), data);
+    showSyncStatus('online');
+  } catch(e) {
+    console.error('Error guardando:', e);
+    showSyncStatus('offline');
+    LS('p3_'+path, data); // fallback cache
+  }
+}
+
+// Alias para compatibilidad con código existente
+const S = (k, v) => {
+  // k viene como 'p3_stock', 'p3_movs', 'p3_prods'
+  const path = k.replace('p3_','');
+  LS(k, v); // siempre guardar en cache local también
+  fbSet(path, v);
+};
+
+// ══ ESCUCHAR CAMBIOS EN TIEMPO REAL ══
+function suscribirCambios() {
+  if (!fbReady) return;
+  const { ref, onValue } = window._fb;
+  let primeraVez = { stock: true, movs: true, prods: true };
+
+  onValue(ref(fbDB, 'stock'), snap => {
+    const data = snap.val();
+    if (data && Object.keys(data).length) {
+      stock = data;
+      LS('p3_stock', stock);
+    } else if (primeraVez.stock && Object.keys(stock).length) {
+      // Migrar datos locales a Firebase
+      fbSet('stock', stock);
+    }
+    if (!primeraVez.stock) refrescarPantallaActual();
+    primeraVez.stock = false;
+  });
+
+  onValue(ref(fbDB, 'movs'), snap => {
+    const data = snap.val();
+    if (data) {
+      movs = (Array.isArray(data) ? data : Object.values(data)).filter(Boolean);
+      LS('p3_movs', movs);
+    } else if (primeraVez.movs && movs.length) {
+      fbSet('movs', movs);
+    }
+    if (!primeraVez.movs) refrescarPantallaActual();
+    primeraVez.movs = false;
+  });
+
+  onValue(ref(fbDB, 'prods'), snap => {
+    const data = snap.val();
+    if (data) {
+      prods = (Array.isArray(data) ? data : Object.values(data)).filter(Boolean);
+      LS('p3_prods', prods);
+    } else if (primeraVez.prods && prods.length) {
+      fbSet('prods', prods);
+    }
+    if (!primeraVez.prods) refrescarPantallaActual();
+    primeraVez.prods = false;
+  });
+}
+
+function refrescarPantallaActual() {
+  const activa = document.querySelector('.screen.active');
+  if (!activa) return;
+  const id = activa.id.replace('sc-','');
+  // Solo refrescar si no estamos en medio de un form activo
+  const focused = document.activeElement;
+  if (focused && (focused.tagName === 'INPUT' || focused.tagName === 'SELECT')) return;
+  try { renderScreen(id); } catch(e) {}
+}
+
+// ══ CARGAR DESDE CACHE (modo offline) ══
+function cargarDesdeCache() {
+  stock = LC('p3_stock', {});
+  movs  = LC('p3_movs',  []);
+  prods = LC('p3_prods', []);
+  inicializarDatosVacios();
+}
+
+// ══ INICIALIZAR DATOS SI ESTÁN VACÍOS ══
+function inicializarDatosVacios() {
+  if (!Object.keys(stock).length) {
+    INSUMOS_BASE.forEach(i => { stock[i.n] = {s:0, u:i.u, p:i.p, cat:i.cat}; });
+    S('p3_stock', stock);
+  }
+  if (!prods.length) {
+    prods = [
+      {cod:"3001",nom:"Brownie",cat:"Brownies",pv:3500,st:0,min:5,rec:"Brownie"},
+      {cod:"3002",nom:"Brownie pistacho",cat:"Brownies",pv:4500,st:0,min:5,rec:"Brownie pistacho"},
+      {cod:"3003",nom:"Brownie Ferrero",cat:"Brownies",pv:4500,st:0,min:5,rec:"Brownie Ferrero"},
+      {cod:"3004",nom:"Cheescake",cat:"Cheescakes",pv:18000,st:0,min:3,rec:"Cheescake"},
+      {cod:"3005",nom:"Cheescake Pistacho",cat:"Cheescakes",pv:22000,st:0,min:3,rec:"Cheescake Pistacho"},
+      {cod:"3006",nom:"Cheescake Oreo",cat:"Cheescakes",pv:20000,st:0,min:3,rec:"Cheescake Oreo"},
+      {cod:"3007",nom:"Cheescake Maracuya",cat:"Cheescakes",pv:20000,st:0,min:3,rec:"Cheescake Maracuya"},
+      {cod:"3008",nom:"Cheescake Berries",cat:"Cheescakes",pv:20000,st:0,min:3,rec:"Cheescake Berries"},
+      {cod:"3009",nom:"Galleta zanahoria",cat:"Galletas",pv:1800,st:0,min:10,rec:"Galleta zanahoria"},
+      {cod:"3010",nom:"Galletas Red velvet",cat:"Galletas",pv:1800,st:0,min:10,rec:"Galletas Red velvet"},
+      {cod:"3011",nom:"Galletas chips",cat:"Galletas",pv:1800,st:0,min:10,rec:"Galletas chips"},
+      {cod:"3012",nom:"Galletas Oreo",cat:"Galletas",pv:1800,st:0,min:10,rec:"Galletas Oreo"},
+      {cod:"3013",nom:"Galletas Café",cat:"Galletas",pv:1800,st:0,min:10,rec:"Galletas Café"},
+      {cod:"3014",nom:"Rollito canela",cat:"Rollitos",pv:2500,st:0,min:8,rec:"Rollito canela"},
+      {cod:"3015",nom:"Rollito pistacho",cat:"Rollitos",pv:3200,st:0,min:8,rec:"Rollito pistacho"},
+      {cod:"3016",nom:"Rollito Berries",cat:"Rollitos",pv:3000,st:0,min:8,rec:"Rollito Berries"},
+      {cod:"3017",nom:"Rollito Ferrero",cat:"Rollitos",pv:3200,st:0,min:8,rec:"Rollito Ferrero"},
+    ];
+    S('p3_prods', prods);
+  }
 }
 
 // ══ UTILS ══
@@ -1144,10 +1325,9 @@ function switchSubTab(grp,name,btn){
   ctx.querySelectorAll('.pill').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   if(grp==='mov'){
-    ['entradas','salidas','mermas','historial'].forEach(id=>$('mov-'+id).style.display=id===name?'':'none');
+    ['entradas','salidas','mermas'].forEach(id=>$('mov-'+id).style.display=id===name?'':'none');
     if(name==='salidas')renderVentasMes();
     if(name==='mermas')renderMermasMes();
-    if(name==='historial')renderHistorial();
   }else{
     ['lista','analisis','stock-critico'].forEach(id=>$('prod-'+id).style.display=id===name?'':'none');
     if(name==='analisis')renderAnalisis();
@@ -1159,6 +1339,7 @@ function switchSubTab(grp,name,btn){
 function renderScreen(name){
   if(name==='dashboard')renderDash();
   if(name==='movimientos'){initMovForm();renderStockTable();}
+  if(name==='historial')renderHistorial();
   if(name==='productos')renderMPLista();
   if(name==='calculadora')initCalc();
   if(name==='recetas')renderRecetas();
@@ -1762,12 +1943,28 @@ function closeModal(id){$(id).classList.remove('open');}
 document.querySelectorAll('.overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
 
 // ══ INIT ══
-document.addEventListener('DOMContentLoaded',()=>{
-  const now=new Date();
-  const hd=$('hist-desde'),hh=$('hist-hasta');
-  if(hd)hd.value=new Date(now.getFullYear(),now.getMonth(),1).toISOString().split('T')[0];
-  if(hh)hh.value=today();
+document.addEventListener('DOMContentLoaded', async () => {
+  const now = new Date();
+  // Cargar cache local inmediatamente para que la app sea rápida
+  stock = LC('p3_stock', {});
+  movs  = LC('p3_movs',  []);
+  prods = LC('p3_prods', []);
+
+  // Establecer fechas del historial
+  const hd=$('hist-desde'), hh=$('hist-hasta');
+  if(hd) hd.value = new Date(now.getFullYear(),now.getMonth(),1).toISOString().split('T')[0];
+  if(hh) hh.value = today();
+
+  // Mostrar la app con datos en caché primero
+  inicializarDatosVacios();
   renderDash();
+
+  // Luego conectar Firebase en segundo plano
+  await loadFirebase();
+  if (fbReady) {
+    suscribirCambios();
+    showSyncStatus('online');
+  }
 });
 </script>
 </body>
