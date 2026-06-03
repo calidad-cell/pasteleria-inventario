@@ -710,7 +710,6 @@ tfoot td{border-top:2px solid var(--lilac-d);border-bottom:none;}
           <div id="sal-prod-sec">
             <div class="fg"><label>Local</label>
               <select id="sal-local">
-                <option value="Brutal Valdivia">🏪 Brutal Valdivia</option>
                 <option value="Brutal Centro">🏬 Brutal Centro</option>
               </select>
             </div>
@@ -813,7 +812,7 @@ tfoot td{border-top:2px solid var(--lilac-d);border-bottom:none;}
           <div class="fg" style="margin:0"><label>Local</label>
             <select id="hist-local">
               <option value="">Todos los locales</option>
-              <option value="Brutal Valdivia">Brutal Valdivia</option>
+              
               <option value="Brutal Centro">Brutal Centro</option>
             </select>
           </div>
@@ -1543,34 +1542,56 @@ function calcTotalVenta(){
 }
 
 function registrarSalida(){
-  const fecha=$('sal-fecha').value,tipo=$('sal-tipo').value,obs=$('sal-obs').value;
-  if(!fecha){toast('Selecciona fecha.','danger');return;}
+  const fecha=$('sal-fecha').value;
+  const tipo=$('sal-tipo').value;
+  const obs=$('sal-obs').value||''; // obs NUNCA obligatorio
+
+  if(!fecha){toast('⚠️ Selecciona la fecha.','danger');return;}
+
   if(tipo==='venta'){
     const sp=$('sal-producto');
     const pn=sp?.value||'';
     const esKg=PRODS_KG.includes(pn);
-    const cant=esKg ? parseFloat($('sal-cant-prod').value) : parseInt($('sal-cant-prod').value);
+    const cantRaw=$('sal-cant-prod').value;
+    const cant=esKg ? parseFloat(cantRaw) : parseFloat(cantRaw);
     const pv=parseFloat($('sal-precio-venta').value)||0;
     const local=$('sal-local').value;
-    if(!pn||isNaN(cant)||cant<=0){toast('Completa los campos.','danger');return;}
+
+    if(!pn){toast('⚠️ Selecciona un producto.','danger');return;}
+    if(!cantRaw||isNaN(cant)||cant<=0){toast('⚠️ Ingresa la cantidad.','danger');return;}
+    if(pv<=0){
+      // Avisar pero dejar pasar si confirman
+      if(!confirm('El precio es $0. ¿Registrar igual?'))return;
+    }
+
     const prod=prods.find(p=>p.nom===pn);
     if(prod){
       prod.st=Math.max(0,prod.st-cant);
       const r=RD[pn];
-      if(r){r.i.forEach(ing=>{const k=Object.keys(stock).find(k=>k.toLowerCase()===ing.n.toLowerCase());if(k)stock[k].s=Math.max(0,stock[k].s-ing.q*cant);});S('p3_stock',stock);}
+      if(r){
+        r.i.forEach(ing=>{
+          const k=Object.keys(stock).find(k=>k.toLowerCase()===ing.n.toLowerCase());
+          if(k)stock[k].s=Math.max(0,stock[k].s-ing.q*cant);
+        });
+        S('p3_stock',stock);
+      }
       S('p3_prods',prods);
     }
     const descLabel=esKg?`${pn} (${fmtN(cant)} kg)`:pn;
     movs.push({id:Date.now(),fecha,tipo:'venta',desc:descLabel,descripcion:descLabel,cantidad:cant,precioU:pv,total:cant*pv,local,obs});
     S('p3_movs',movs);
-    toast(`✅ Venta: ${esKg?fmtN(cant)+' kg':cant+'×'} ${pn} — $${fmt(cant*pv)}`);
+    toast(`✅ ${esKg?fmtN(cant)+' kg':cant+'×'} ${pn} — $${fmt(cant*pv)}`);
     $('sal-cant-prod').value='';
+    $('sal-obs').value='';
     const el=$('sal-total-preview');if(el)el.style.display='none';
     setTimeout(onSalidaProd,100);
+
   }else{
-    const ins=$('sal-ins-sel').value,cant=parseFloat($('sal-ins-cant').value);
-    if(!ins||isNaN(cant)||cant<=0){toast('Completa los campos.','danger');return;}
-    if(stock[ins].s<cant){toast('Stock insuficiente.','warn');return;}
+    const ins=$('sal-ins-sel').value;
+    const cant=parseFloat($('sal-ins-cant').value);
+    if(!ins){toast('⚠️ Selecciona el insumo.','danger');return;}
+    if(isNaN(cant)||cant<=0){toast('⚠️ Ingresa la cantidad.','danger');return;}
+    if(stock[ins].s<cant){toast('⚠️ Stock insuficiente.','warn');return;}
     stock[ins].s-=cant;S('p3_stock',stock);
     movs.push({id:Date.now(),fecha,tipo:'salida',desc:'Salida: '+ins,descripcion:'Salida: '+ins,cantidad:cant,precioU:0,total:0,local:'',obs});
     S('p3_movs',movs);
@@ -1584,8 +1605,6 @@ function renderVentasMes(){
   const now=new Date();
   const vm=movs.filter(m=>{const d=new Date(m.fecha+'T12:00:00');return m.tipo==='venta'&&d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();});
   const tv=vm.reduce((a,b)=>a+(b.total||0),0),uv=vm.reduce((a,b)=>a+b.cantidad,0);
-  const vv=vm.filter(m=>m.local==='Brutal Valdivia').reduce((a,b)=>a+(b.total||0),0);
-  const vc=vm.filter(m=>m.local==='Brutal Centro').reduce((a,b)=>a+(b.total||0),0);
   const el=$('ventas-mes');if(!el)return;
   el.innerHTML=`
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:0.7rem">
@@ -1597,17 +1616,9 @@ function renderVentasMes(){
         <div style="font-size:1.1rem;font-weight:800;color:var(--blue-d)">${uv}</div>
         <div style="font-size:0.62rem;font-weight:800;color:var(--blue-d);opacity:0.8">UNIDADES</div>
       </div>
-      <div style="background:var(--pink-s);border-radius:var(--r-sm);padding:0.6rem;border:1.5px solid var(--pink)">
-        <div style="font-size:0.65rem;font-weight:800;color:var(--pink-d);margin-bottom:0.1rem">🏪 Brutal Valdivia</div>
-        <div style="font-size:1rem;font-weight:800;color:var(--pink-d)">$${fmt(vv)}</div>
-      </div>
-      <div style="background:var(--lilac-s);border-radius:var(--r-sm);padding:0.6rem;border:1.5px solid var(--lilac)">
-        <div style="font-size:0.65rem;font-weight:800;color:var(--lilac-d);margin-bottom:0.1rem">🏬 Brutal Centro</div>
-        <div style="font-size:1rem;font-weight:800;color:var(--lilac-d)">$${fmt(vc)}</div>
-      </div>
     </div>
     ${vm.slice(-8).reverse().map(m=>`<div class="list-row">
-      <div class="list-icon ${m.local==='Brutal Valdivia'?'li-pink':'li-lilac'}">${m.local==='Brutal Valdivia'?'🏪':'🏬'}</div>
+      <div class="list-icon li-lilac">🏬</div>
       <div class="list-body">
         <div class="list-name" style="font-size:0.8rem">${m.desc||m.descripcion}</div>
         <div class="list-sub">${fmtD(m.fecha)} · ${m.cantidad} un. · ${m.local||'—'}</div>
