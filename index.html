@@ -674,7 +674,10 @@ tfoot td{border-top:2px solid var(--lilac-d);border-bottom:none;}
             <div class="fg" style="margin:0"><label>Unidad</label><input type="text" id="ent-unidad" readonly></div>
           </div>
           <div class="mt1"></div>
-          <div class="fg"><label>Precio Unitario (CLP)</label><input type="number" id="ent-precio" placeholder="0"></div>
+          <div class="fg">
+            <label>Precio de Costo — desde catálogo</label>
+            <input type="text" id="ent-precio-display" readonly style="background:var(--blue-s);color:var(--blue-d);font-weight:800;border-color:var(--blue)">
+          </div>
           <div class="fg"><label>Proveedor / Nota</label><input type="text" id="ent-proveedor" placeholder="Opcional..."></div>
           <button class="btn btn-mint btn-full" onclick="registrarEntrada()">✅ Registrar Entrada</button>
         </div>
@@ -713,9 +716,16 @@ tfoot td{border-top:2px solid var(--lilac-d);border-bottom:none;}
             </div>
             <div class="fg"><label>Producto</label><select id="sal-producto" onchange="onSalidaProd()"></select></div>
             <div class="row2">
-              <div class="fg" style="margin:0"><label>Unidades</label><input type="number" id="sal-cant-prod" placeholder="0" min="1"></div>
-              <div class="fg" style="margin:0"><label>Precio c/u (CLP)</label><input type="number" id="sal-precio-venta" placeholder="0"></div>
+              <div class="fg" style="margin:0">
+                <label id="sal-cant-label">Cantidad</label>
+                <input type="number" id="sal-cant-prod" placeholder="0" min="0" step="0.001" oninput="calcTotalVenta()">
+              </div>
+              <div class="fg" style="margin:0">
+                <label>Precio c/u — desde catálogo</label>
+                <input type="number" id="sal-precio-venta" placeholder="0" readonly style="background:var(--mint-s);color:var(--mint-d);font-weight:800;border-color:var(--mint)" oninput="calcTotalVenta()">
+              </div>
             </div>
+            <div id="sal-total-preview" style="display:none;background:var(--mint-s);border-radius:var(--r-sm);padding:0.6rem 0.9rem;margin-top:0.6rem;border:1.5px solid var(--mint);align-items:center;justify-content:space-between"></div>
             <div class="mt1"></div>
             <div class="al al-pink" id="sal-warn" style="display:none">⚠️ Los ingredientes se descontarán del stock.</div>
           </div>
@@ -1299,11 +1309,14 @@ function inicializarDatosVacios() {
       {cod:"3010",nom:"Galletas Red velvet",cat:"Galletas",pv:1800,st:0,min:10,rec:"Galletas Red velvet"},
       {cod:"3011",nom:"Galletas chips",cat:"Galletas",pv:1800,st:0,min:10,rec:"Galletas chips"},
       {cod:"3012",nom:"Galletas Oreo",cat:"Galletas",pv:1800,st:0,min:10,rec:"Galletas Oreo"},
-      {cod:"3013",nom:"Galletas Café",cat:"Galletas",pv:1800,st:0,min:10,rec:"Galletas Café"},
+      {cod:"3013",nom:"Galletas Café",cat:"Galletas",pv:1800,st:0,min:10,rec:"Galletas Café",unidad:"KG"},
       {cod:"3014",nom:"Rollito canela",cat:"Rollitos",pv:2500,st:0,min:8,rec:"Rollito canela"},
       {cod:"3015",nom:"Rollito pistacho",cat:"Rollitos",pv:3200,st:0,min:8,rec:"Rollito pistacho"},
       {cod:"3016",nom:"Rollito Berries",cat:"Rollitos",pv:3000,st:0,min:8,rec:"Rollito Berries"},
       {cod:"3017",nom:"Rollito Ferrero",cat:"Rollitos",pv:3200,st:0,min:8,rec:"Rollito Ferrero"},
+      {cod:"3021",nom:"Frosting",cat:"Frostings",pv:0,st:0,min:2,rec:"Frosting",unidad:"KG"},
+      {cod:"3022",nom:"Frosting Pistacho",cat:"Frostings",pv:0,st:0,min:2,rec:"Frosting Pistacho",unidad:"KG"},
+      {cod:"3023",nom:"Frosting Ferrero",cat:"Frostings",pv:0,st:0,min:2,rec:"Frosting Ferrero",unidad:"KG"},
     ];
     S('p3_prods', prods);
   }
@@ -1424,7 +1437,12 @@ function initMovForm(){
   const ei=$('ent-insumo');
   if(ei){
     ei.innerHTML=opts.map(n=>`<option value="${n}">${n}</option>`).join('');
-    ei.onchange=()=>{const i=stock[ei.value];$('ent-unidad').value=i?i.u:'';$('ent-precio').value=i?i.p:'';};
+    ei.onchange=()=>{
+      const i=stock[ei.value];
+      $('ent-unidad').value=i?i.u:'';
+      const pd=$('ent-precio-display');
+      if(pd) pd.value=i&&i.p?`$${fmt(i.p)} por ${i.u}`:'Sin precio registrado';
+    };
     ei.dispatchEvent(new Event('change'));
   }
   const mi=$('mer-insumo');
@@ -1434,7 +1452,12 @@ function initMovForm(){
     mi.dispatchEvent(new Event('change'));
   }
   const si=$('sal-ins-sel');if(si)si.innerHTML=opts.map(n=>`<option value="${n}">${n}</option>`).join('');
-  const sp=$('sal-producto');if(sp)sp.innerHTML=prods.map(p=>`<option value="${p.nom}">${p.nom}</option>`).join('');
+  const sp=$('sal-producto');
+  if(sp){
+    sp.innerHTML=prods.map(p=>`<option value="${p.nom}" data-pv="${p.pv||0}">${p.nom} — $${fmt(p.pv||0)}</option>`).join('');
+    sp.onchange=onSalidaProd;
+    sp.dispatchEvent(new Event('change'));
+  }
   if(!$('ent-fecha').value)$('ent-fecha').value=today();
   if(!$('sal-fecha').value)$('sal-fecha').value=today();
   if(!$('mer-fecha').value)$('mer-fecha').value=today();
@@ -1443,15 +1466,15 @@ function initMovForm(){
 function registrarEntrada(){
   const fecha=$('ent-fecha').value,ins=$('ent-insumo').value,
     cant=parseFloat($('ent-cantidad').value),
-    precio=parseFloat($('ent-precio').value)||0,
     prov=$('ent-proveedor').value;
   if(!fecha||!ins||isNaN(cant)||cant<=0){toast('Completa los campos requeridos.','danger');return;}
+  const precio=stock[ins]?.p||0; // precio desde catálogo
   stock[ins].s+=cant;S('p3_stock',stock);
-  movs.push({id:Date.now(),fecha,tipo:'entrada',desc:ins,descripcion:ins,cantidad:cant,total:cant*precio,obs:prov});
+  movs.push({id:Date.now(),fecha,tipo:'entrada',desc:ins,descripcion:ins,cantidad:cant,precioU:precio,total:cant*precio,obs:prov});
   S('p3_movs',movs);
   $('ent-cantidad').value='';
   renderStockTable();
-  toast(`✅ ${fmtN(cant)} de ${ins}`);
+  toast(`✅ ${fmtN(cant)} de ${ins} — $${fmt(cant*precio)}`);
 }
 
 function renderStockTable(){
@@ -1469,13 +1492,65 @@ function toggleSalidaTipo(){
   $('sal-prod-sec').style.display=t==='venta'?'':'none';
   $('sal-ins-sec').style.display=t==='insumo'?'':'none';
 }
-function onSalidaProd(){$('sal-warn').style.display='';}
+// Productos que se venden por kg (precio es por 1 kg)
+const PRODS_KG = ['Galletas Café','Frosting','Frosting Pistacho','Frosting Ferrero'];
+
+function onSalidaProd(){
+  $('sal-warn').style.display='';
+  const sp=$('sal-producto');
+  const pn=sp?.value||'';
+  const sel=sp?.options[sp.selectedIndex];
+
+  // Auto-rellenar precio de venta desde el catálogo
+  const prod=prods.find(p=>p.nom===pn);
+  const pv=prod?.pv||0;
+  const pvInput=$('sal-precio-venta');
+  if(pvInput){
+    pvInput.value=pv||'';
+    pvInput.readOnly=pv>0; // editable si no tiene precio
+    pvInput.style.background=pv>0?'var(--mint-s)':'white';
+    pvInput.style.borderColor=pv>0?'var(--mint)':'var(--border)';
+    pvInput.style.color=pv>0?'var(--mint-d)':'var(--text)';
+  }
+
+  // Detectar si es producto en KG
+  const esKg=PRODS_KG.includes(pn);
+  const cantInput=$('sal-cant-prod');
+  const cantLabel=$('sal-cant-label');
+  if(cantInput){
+    cantInput.step=esKg?'0.001':'1';
+    cantInput.min='0';
+    cantInput.placeholder=esKg?'Ej: 0.500':'0';
+  }
+  if(cantLabel) cantLabel.textContent=esKg?'Cantidad (kg)':'Cantidad (unidades)';
+
+  calcTotalVenta();
+}
+
+function calcTotalVenta(){
+  const cant=parseFloat($('sal-cant-prod').value)||0;
+  const pv=parseFloat($('sal-precio-venta').value)||0;
+  const total=cant*pv;
+  const el=$('sal-total-preview');
+  if(el){
+    if(total>0){
+      el.style.display='flex';
+      el.innerHTML=`<span style="font-size:0.75rem;color:var(--mid);font-weight:700">Total venta:</span> <span style="font-size:1.15rem;font-weight:800;color:var(--ok)">$${fmt(total)}</span>`;
+    } else {
+      el.style.display='none';
+    }
+  }
+}
 
 function registrarSalida(){
   const fecha=$('sal-fecha').value,tipo=$('sal-tipo').value,obs=$('sal-obs').value;
   if(!fecha){toast('Selecciona fecha.','danger');return;}
   if(tipo==='venta'){
-    const pn=$('sal-producto').value,cant=parseInt($('sal-cant-prod').value),pv=parseFloat($('sal-precio-venta').value)||0;
+    const sp=$('sal-producto');
+    const pn=sp?.value||'';
+    const esKg=PRODS_KG.includes(pn);
+    const cant=esKg ? parseFloat($('sal-cant-prod').value) : parseInt($('sal-cant-prod').value);
+    const pv=parseFloat($('sal-precio-venta').value)||0;
     const local=$('sal-local').value;
     if(!pn||isNaN(cant)||cant<=0){toast('Completa los campos.','danger');return;}
     const prod=prods.find(p=>p.nom===pn);
@@ -1485,10 +1560,13 @@ function registrarSalida(){
       if(r){r.i.forEach(ing=>{const k=Object.keys(stock).find(k=>k.toLowerCase()===ing.n.toLowerCase());if(k)stock[k].s=Math.max(0,stock[k].s-ing.q*cant);});S('p3_stock',stock);}
       S('p3_prods',prods);
     }
-    movs.push({id:Date.now(),fecha,tipo:'venta',desc:pn,descripcion:pn,cantidad:cant,precioU:pv,total:cant*pv,local,obs});
+    const descLabel=esKg?`${pn} (${fmtN(cant)} kg)`:pn;
+    movs.push({id:Date.now(),fecha,tipo:'venta',desc:descLabel,descripcion:descLabel,cantidad:cant,precioU:pv,total:cant*pv,local,obs});
     S('p3_movs',movs);
-    toast(`✅ Venta: ${cant}× ${pn} — ${local}`);
-    $('sal-cant-prod').value='';$('sal-precio-venta').value='';
+    toast(`✅ Venta: ${esKg?fmtN(cant)+' kg':cant+'×'} ${pn} — $${fmt(cant*pv)}`);
+    $('sal-cant-prod').value='';
+    const el=$('sal-total-preview');if(el)el.style.display='none';
+    setTimeout(onSalidaProd,100);
   }else{
     const ins=$('sal-ins-sel').value,cant=parseFloat($('sal-ins-cant').value);
     if(!ins||isNaN(cant)||cant<=0){toast('Completa los campos.','danger');return;}
