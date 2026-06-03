@@ -845,28 +845,30 @@ tfoot td{border-top:2px solid var(--lilac-d);border-bottom:none;}
 
 <div id="sc-productos" class="screen">
   <div class="ph">
-    <div class="ph-title">Materias Primas</div>
-    <button class="btn btn-primary btn-sm" onclick="openModalMP()">+ Nueva MP</button>
+    <div class="ph-title">Inventario</div>
+    <button class="btn btn-primary btn-sm" id="btn-nuevo-item" onclick="openModalNuevo()">+ Nuevo</button>
   </div>
   <div class="pill-tabs">
-    <button class="pill active" onclick="switchSubTab('prod','lista',this)">📋 Inventario</button>
-    <button class="pill" onclick="switchSubTab('prod','analisis',this)">📈 Análisis</button>
+    <button class="pill active" onclick="switchSubTab('prod','insumos',this)">🧂 Insumos</button>
+    <button class="pill" onclick="switchSubTab('prod','productos',this)">🛍️ Productos</button>
     <button class="pill" onclick="switchSubTab('prod','stock-critico',this)">⚠️ Crítico</button>
   </div>
 
-  <div id="prod-lista" class="ph-pad">
+  <!-- INSUMOS -->
+  <div id="prod-insumos" class="ph-pad">
     <div id="prod-list-container"></div>
   </div>
-  <div id="prod-analisis" style="display:none" class="ph-pad">
-    <div id="analisis-chips" class="chips-row" style="padding:0;margin-bottom:0.8rem"></div>
-    <div class="card"><div class="card-pad">
-      <div class="card-title">Ventas por Producto — Mes Actual</div>
-      <div id="analisis-chart"></div>
-    </div></div>
+
+  <!-- PRODUCTOS -->
+  <div id="prod-productos" style="display:none" class="ph-pad">
+    <div id="prod-productos-container"></div>
   </div>
+
+  <!-- STOCK CRÍTICO -->
   <div id="prod-stock-critico" style="display:none" class="ph-pad">
     <div id="stock-critico-body"></div>
   </div>
+
   <div style="height:1rem"></div>
 </div>
 
@@ -955,19 +957,22 @@ tfoot td{border-top:2px solid var(--lilac-d);border-bottom:none;}
   </button>
 </nav>
 
-<!-- MODAL: MATERIA PRIMA -->
+<!-- MODAL: INSUMO / PRODUCTO -->
 <div class="overlay" id="modal-mp">
   <div class="sheet">
     <div class="sheet-handle"></div>
     <div class="sheet-head">
-      <div class="sheet-title" id="modal-mp-title">Nueva Materia Prima</div>
+      <div class="sheet-title" id="modal-mp-title">Nuevo Item</div>
       <button class="sheet-close" onclick="closeModal('modal-mp')">✕</button>
     </div>
     <div class="sheet-body">
       <input type="hidden" id="mp-edit-key">
-      <div class="fg"><label>Nombre del Insumo</label><input type="text" id="mp-nom" placeholder="Ej: HARINA DE TRIGO"></div>
+      <input type="hidden" id="mp-tipo-item">
+
+      <!-- Nombre y categoría -->
+      <div class="fg"><label>Nombre</label><input type="text" id="mp-nom" placeholder="Ej: HARINA DE TRIGO"></div>
       <div class="row2">
-        <div class="fg" style="margin:0 0 0.85rem"><label>Unidad de medida</label>
+        <div class="fg" style="margin:0 0 0.85rem"><label>Unidad</label>
           <select id="mp-unidad">
             <option>KG</option><option>LITRO</option><option>GR</option><option>UN</option>
             <option>500 GRS</option><option>250 GRS</option><option>4 KG</option><option>25 KG</option>
@@ -983,12 +988,24 @@ tfoot td{border-top:2px solid var(--lilac-d);border-bottom:none;}
           </select>
         </div>
       </div>
-      <div class="row2">
-        <div class="fg" style="margin:0 0 0.85rem"><label>Precio unitario (CLP)</label><input type="number" id="mp-precio" placeholder="0" min="0"></div>
-        <div class="fg" style="margin:0 0 0.85rem"><label>Stock actual</label><input type="number" id="mp-stock" placeholder="0" min="0" step="0.01"></div>
+
+      <!-- Precios -->
+      <div style="background:var(--mint-s);border-radius:var(--r-sm);padding:0.8rem;border:1.5px solid var(--mint);margin-bottom:0.85rem">
+        <div style="font-size:0.7rem;font-weight:800;color:var(--mint-d);margin-bottom:0.6rem">💰 PRECIOS</div>
+        <div class="fg"><label>Precio de Costo / Compra (CLP)</label><input type="number" id="mp-precio" placeholder="0" min="0"></div>
+        <div class="fg" id="mp-pv-group" style="margin:0"><label>Precio de Venta (CLP)</label><input type="number" id="mp-pv" placeholder="0" min="0"></div>
       </div>
-      <div class="fg"><label>Stock mínimo (alerta)</label><input type="number" id="mp-min" placeholder="2" min="0" step="0.01"></div>
-      <div class="flex-end mt1">
+
+      <!-- Stock -->
+      <div style="background:var(--blue-s);border-radius:var(--r-sm);padding:0.8rem;border:1.5px solid var(--blue);margin-bottom:0.85rem">
+        <div style="font-size:0.7rem;font-weight:800;color:var(--blue-d);margin-bottom:0.6rem">📦 STOCK</div>
+        <div class="row2">
+          <div class="fg" style="margin:0"><label>Stock actual</label><input type="number" id="mp-stock" placeholder="0" min="0" step="0.01"></div>
+          <div class="fg" style="margin:0"><label>Stock mínimo</label><input type="number" id="mp-min" placeholder="2" min="0" step="0.01"></div>
+        </div>
+      </div>
+
+      <div class="flex-end">
         <button class="btn btn-outline" onclick="closeModal('modal-mp')">Cancelar</button>
         <button class="btn btn-primary" onclick="guardarMP()">💾 Guardar</button>
       </div>
@@ -1329,10 +1346,15 @@ function switchSubTab(grp,name,btn){
     if(name==='salidas')renderVentasMes();
     if(name==='mermas')renderMermasMes();
   }else{
-    ['lista','analisis','stock-critico'].forEach(id=>$('prod-'+id).style.display=id===name?'':'none');
-    if(name==='analisis')renderAnalisis();
+    ['insumos','productos','stock-critico'].forEach(id=>{
+      const el=$('prod-'+id); if(el) el.style.display=id===name?'':'none';
+    });
+    if(name==='insumos')renderMPLista();
+    if(name==='productos')renderProductosLista();
     if(name==='stock-critico')renderStockCritico();
-    if(name==='lista')renderMPLista();
+    // Cambiar botón nuevo según tab activo
+    const btn=$('btn-nuevo-item');
+    if(btn) btn.onclick = name==='productos' ? ()=>openModalNuevo('producto') : ()=>openModalNuevo('insumo');
   }
 }
 
@@ -1344,7 +1366,6 @@ function renderScreen(name){
   if(name==='calculadora')initCalc();
   if(name==='recetas')renderRecetas();
 }
-
 // ══ DASHBOARD ══
 function renderDash(){
   const now=new Date();
@@ -1764,7 +1785,10 @@ function renderMPLista(){
         return `<div class="list-row">
           <div class="list-body">
             <div class="list-name">${nom}</div>
-            <div class="list-sub">Stock: <strong>${fmtN(i.s)}</strong> ${i.u} · Precio: $${fmt(i.p||0)}</div>
+            <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.15rem">
+              <span style="font-size:0.68rem;font-weight:700;color:var(--text)">Stock: ${fmtN(i.s)} ${i.u}</span>
+              <span style="font-size:0.68rem;font-weight:700;color:var(--mint-d)">Costo: $${fmt(i.p||0)}</span>
+            </div>
           </div>
           <div class="list-right" style="display:flex;flex-direction:column;align-items:flex-end;gap:0.3rem">
             <span class="badge ${bCls}">${i.s<=0?'🔴 Agotado':i.s<=(i.min||2)?'🟡 Bajo':'🟢 OK'}</span>
@@ -1776,42 +1800,140 @@ function renderMPLista(){
         </div>`;
       }).join('')}
     </div>`;
-  }).join('')||'<div class="empty"><div class="ei">📦</div><p>Sin materias primas</p></div>';
+  }).join('')||'<div class="empty"><div class="ei">📦</div><p>Sin insumos</p></div>';
 }
 
-function openModalMP(){
-  $('mp-edit-key').value='';
-  ['mp-nom','mp-precio','mp-stock','mp-min'].forEach(id=>$(id).value='');
+function openModalNuevo(tipo='insumo'){
+  $('mp-edit-key').value='';$('mp-tipo-item').value=tipo;
+  ['mp-nom','mp-precio','mp-pv','mp-stock','mp-min'].forEach(id=>$(id).value='');
   $('mp-unidad').value='KG';$('mp-cat').value='Harinas';
-  $('modal-mp-title').textContent='Nueva Materia Prima';
+  $('mp-pv-group').style.display=tipo==='producto'?'':'none';
+  $('modal-mp-title').textContent=tipo==='producto'?'Nuevo Producto':'Nuevo Insumo';
   openModal('modal-mp');
 }
 
+function openModalMP(){ openModalNuevo('insumo'); }
+
 function editarMP(nom){
   const i=stock[nom];if(!i)return;
-  $('mp-edit-key').value=nom;$('mp-nom').value=nom;
-  $('mp-unidad').value=i.u;$('mp-cat').value=i.cat;
-  $('mp-precio').value=i.p||0;$('mp-stock').value=i.s;$('mp-min').value=i.min||2;
-  $('modal-mp-title').textContent='Editar Materia Prima';
+  $('mp-edit-key').value=nom;$('mp-tipo-item').value='insumo';
+  $('mp-nom').value=nom;$('mp-unidad').value=i.u;$('mp-cat').value=i.cat;
+  $('mp-precio').value=i.p||0;$('mp-pv').value=i.pv||0;
+  $('mp-stock').value=i.s;$('mp-min').value=i.min||2;
+  $('mp-pv-group').style.display='none';
+  $('modal-mp-title').textContent='Editar Insumo';
+  openModal('modal-mp');
+}
+
+function editarProducto(cod){
+  const p=prods.find(x=>x.cod===cod);if(!p)return;
+  $('mp-edit-key').value='prod_'+cod;$('mp-tipo-item').value='producto';
+  $('mp-nom').value=p.nom;$('mp-unidad').value=p.unidad||'UN';
+  $('mp-cat').value=p.cat;
+  $('mp-precio').value=p.pc||0;  // precio de costo
+  $('mp-pv').value=p.pv||0;       // precio de venta
+  $('mp-stock').value=p.st||0;$('mp-min').value=p.min||5;
+  $('mp-pv-group').style.display='';
+  $('modal-mp-title').textContent='Editar Producto';
   openModal('modal-mp');
 }
 
 function guardarMP(){
   const editKey=$('mp-edit-key').value;
+  const tipo=$('mp-tipo-item').value||'insumo';
   const nom=$('mp-nom').value.trim().toUpperCase();
   if(!nom){toast('El nombre es requerido.','danger');return;}
-  const datos={s:parseFloat($('mp-stock').value)||0,u:$('mp-unidad').value,p:parseFloat($('mp-precio').value)||0,cat:$('mp-cat').value,min:parseFloat($('mp-min').value)||2};
-  if(editKey&&editKey!==nom){delete stock[editKey];}// renombrar
-  stock[nom]=datos;
-  S('p3_stock',stock);closeModal('modal-mp');renderMPLista();
-  // Refrescar selects de movimientos si están visibles
-  const ei=$('ent-insumo');if(ei)ei.innerHTML=Object.keys(stock).sort().map(n=>`<option value="${n}">${n}</option>`).join('');
-  toast('✅ Materia prima guardada.');
+
+  if(tipo==='producto'){
+    // Guardar como producto en prods[]
+    const cod = editKey.startsWith('prod_') ? editKey.replace('prod_','') : String(Date.now()).slice(-4);
+    const datos={
+      cod, nom,
+      cat:$('mp-cat').value,
+      pc:parseFloat($('mp-precio').value)||0,
+      pv:parseFloat($('mp-pv').value)||0,
+      st:parseFloat($('mp-stock').value)||0,
+      min:parseFloat($('mp-min').value)||5,
+      unidad:$('mp-unidad').value,
+    };
+    const idx=prods.findIndex(p=>p.cod===cod);
+    if(idx!==-1) prods[idx]={...prods[idx],...datos};
+    else prods.push(datos);
+    S('p3_prods',prods);
+    closeModal('modal-mp');renderProductosLista();
+    toast('✅ Producto guardado.');
+  } else {
+    // Guardar como insumo en stock{}
+    const datos={
+      s:parseFloat($('mp-stock').value)||0,
+      u:$('mp-unidad').value,
+      p:parseFloat($('mp-precio').value)||0,
+      cat:$('mp-cat').value,
+      min:parseFloat($('mp-min').value)||2
+    };
+    const realKey=editKey&&!editKey.startsWith('prod_')?editKey:'';
+    if(realKey&&realKey!==nom) delete stock[realKey];
+    stock[nom]=datos;
+    S('p3_stock',stock);
+    closeModal('modal-mp');renderMPLista();
+    const ei=$('ent-insumo');
+    if(ei) ei.innerHTML=Object.keys(stock).sort().map(n=>`<option value="${n}">${n}</option>`).join('');
+    toast('✅ Insumo guardado.');
+  }
 }
 
 function eliminarMP(nom){
-  if(!confirm(`¿Eliminar "${nom}" del inventario?`))return;
+  if(!confirm(`¿Eliminar "${nom}"?`))return;
   delete stock[nom];S('p3_stock',stock);renderMPLista();toast('Eliminado.','warn');
+}
+
+function eliminarProducto(cod){
+  if(!confirm('¿Eliminar este producto?'))return;
+  prods=prods.filter(p=>p.cod!==cod);S('p3_prods',prods);renderProductosLista();toast('Eliminado.','warn');
+}
+
+// ══ LISTA DE PRODUCTOS ══
+const PROD_ICONS={Brownies:'🍫',Cheescakes:'🍮',Galletas:'🍪',Rollitos:'🥐',Bases:'🧁',Frostings:'🎂',Otros:'🛍️'};
+
+function renderProductosLista(){
+  const now=new Date();
+  const cats=[...new Set(prods.map(p=>p.cat))].sort();
+  $('prod-productos-container').innerHTML=cats.length===0
+    ?'<div class="empty"><div class="ei">🛍️</div><p>Sin productos — toca + Nuevo</p></div>'
+    :cats.map(cat=>{
+      const catP=prods.filter(p=>p.cat===cat);
+      return `<div class="card mb1">
+        <div style="padding:0.65rem 1rem 0;display:flex;align-items:center;gap:0.5rem">
+          <span>${PROD_ICONS[cat]||'🛍️'}</span>
+          <span style="font-size:0.72rem;font-weight:800;color:var(--mid);text-transform:uppercase;letter-spacing:0.06em">${cat}</span>
+          <span class="badge b-lemon" style="margin-left:auto">${catP.length}</span>
+        </div>
+        ${catP.map(p=>{
+          const vm=movs.filter(m=>{
+            const d=new Date(m.fecha+'T12:00:00');
+            return m.tipo==='venta'&&(m.desc===p.nom||m.descripcion===p.nom)&&d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
+          }).reduce((a,b)=>a+b.cantidad,0);
+          const margen=p.pc>0?Math.round(((p.pv-p.pc)/p.pv)*100):null;
+          return `<div class="list-row">
+            <div class="list-body">
+              <div class="list-name">${p.nom}</div>
+              <div style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-top:0.2rem">
+                <span style="font-size:0.68rem;font-weight:700;color:var(--ok)">Venta: $${fmt(p.pv||0)}</span>
+                <span style="font-size:0.68rem;font-weight:700;color:var(--mid)">Costo: $${fmt(p.pc||0)}</span>
+                ${margen!==null?`<span style="font-size:0.68rem;font-weight:800;color:${margen>=30?'var(--ok)':'var(--warn)'}">Margen: ${margen}%</span>`:''}
+                <span style="font-size:0.68rem;color:var(--soft)">Ventas mes: ${vm}</span>
+              </div>
+            </div>
+            <div class="list-right" style="display:flex;flex-direction:column;align-items:flex-end;gap:0.3rem">
+              <div style="display:flex;gap:0.3rem">
+                <button class="btn btn-ghost btn-xs" onclick="editarProducto('${p.cod}')">✏️</button>
+                <button class="btn btn-ghost btn-xs" onclick="eliminarProducto('${p.cod}')">🗑️</button>
+              </div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>`;
+    }).join('');
 }
 
 // ══ RECETAS — EDITAR ══
